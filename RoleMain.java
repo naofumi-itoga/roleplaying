@@ -6,6 +6,7 @@ class RoleMain {
     PlayerStatus ps = new PlayerStatus(100, 10, 20);
     EnemyStatus es1 = new EnemyStatus(150, 22, 60);
     Ability ab1 = new Ability(1.8, 2);
+    Item it = new Item(-40, 1);
 
       do{
         statusDisplay(ps,es1);
@@ -125,5 +126,27 @@ class Ability{
   }
   int getAbilityCost(){
     return abilityCost;
+  }
+}
+//“¹‹ï‚Ìî•ñ‚ğ•Û‘¶‚·‚éƒƒ\ƒbƒh
+class Item{
+  private int itemEffect;
+  private int itemCount;
+
+
+  Item(int x, int y){
+     itemEffect= x;
+     itemCount = y;
+  }
+
+  void countChange(int x){
+    itemCount+=x;
+  }
+
+  int getItemCount(){
+    return itemCount;
+  }
+  int getItemEffect(){
+    return itemEffect;
   }
 }
