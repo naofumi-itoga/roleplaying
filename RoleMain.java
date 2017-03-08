@@ -1,24 +1,61 @@
+import java.io.*;
 class RoleMain {
   public static void main(String args[]){
+    int damage;//ƒ_ƒ[ƒWŒvŽZ—p•Ï”
+    boolean actionFlag;//s“®‚µ‚½‚©‚Ç‚¤‚©‚Ì”»’è
     PlayerStatus ps = new PlayerStatus(100, 10, 20);
     EnemyStatus es1 = new EnemyStatus(150, 22, 60);
 
-    statusDisplay(ps,es1);
+
+      do{
+        statusDisplay(ps,es1);
+        actionFlag=false;
+        while(!actionFlag){
+          System.out.println("s“®‚ð‘I‘ð‚µ‚Ä‚­‚¾‚³‚¢B\n1.UŒ‚ 2.“Á‹Z 3.“¹‹ï 4.“¦‘–");
+          try{
+            InputStreamReader is = new InputStreamReader(System.in);
+            BufferedReader br = new BufferedReader(is);
+            String buf = br.readLine();//
+            int re = Integer.parseInt(buf);//
+            if(re == 1){
+              damage = damageCalc(ps.getAttack());
+              System.out.println("“G‚É" + damage + "‚Ìƒ_ƒ[ƒW");
+              es1.enemyHPCalc(damage);
+              actionFlag=true;
+            }else if(re == 2){
+              
+            }else if(re == 3){
+
+            }else if(re == 4){
+
+            }else{
+              System.out.println("1~4‚Ì’†‚©‚ç‘I‘ð‚µ‚Ä‚­‚¾‚³‚¢");
+            }
+          }catch(Exception e){
+          }
+        };
+    }while(es1.getHP()>0) ;
 
   }
 
   public static void statusDisplay(PlayerStatus ps, EnemyStatus es){
-    System.out.println("Ž©•ª‚ÌHP:" + ps.playerHP);
-    System.out.println("Ž©•ª‚ÌMP:" + ps.playerMP);
-    System.out.println("“G‚ÌHP:" + es.enemyHP);
+    System.out.println("Ž©•ª‚ÌHP:" + ps.getHP());
+    System.out.println("Ž©•ª‚ÌMP:" + ps.getMP());
+    System.out.println("“G‚ÌHP:" + es.getHP());
+  }
+
+  public static int damageCalc(int at){
+    int rand = (int)(Math.random()*40)+80;
+    System.out.println(rand);
+    return ((at*rand)/100);
   }
 }
 
 class PlayerStatus {
-  static String playerName;
-  static int playerHP;
-  static int playerMP;
-  static int playerAttack;
+  private String playerName;
+  private int playerHP;
+  private int playerMP;
+  private int playerAttack;
 
   PlayerStatus(int x,int y,int z){
     playerHP = x;
@@ -26,21 +63,43 @@ class PlayerStatus {
     playerAttack = z;
   }
 
-  static void nameSet(String str){
+  void nameSet(String str){
     playerName=str;
     System.out.println(playerName);
+  }
+
+  int getHP(){
+    return playerHP;
+  }
+  int getMP(){
+    return playerMP;
+  }
+  int getAttack(){
+    return playerAttack;
   }
 }
 
 class EnemyStatus {
-  static String enemyName;
-  static int enemyHP;
-  static int enemyAttack;
-  static int escapeProbability;
+  private String enemyName;
+  private int enemyHP;
+  private int enemyAttack;
+  private int escapeProbability;
 
   EnemyStatus(int x, int y, int z){
     enemyHP = x;
     enemyAttack = y;
     escapeProbability = z;
+  }
+  void enemyHPCalc(int d){
+    enemyHP-=d;
+  }
+  int getHP(){
+    return enemyHP;
+  }
+  int getAttack(){
+    return enemyAttack;
+  }
+  int getEscape(){
+    return escapeProbability;
   }
 }
