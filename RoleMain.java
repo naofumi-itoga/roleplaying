@@ -8,22 +8,28 @@ class RoleMain {
     PlayerStatus ps = new PlayerStatus(100, 10, 20);//プレイヤーのステータス
     EnemyStatus es1 = new EnemyStatus(175, 22, 60);//CPUのステータス
     Display di = new Display(ps, es1);//コンソールの描画関係
+    //プレイヤーと敵、両方のHPが残っていて、逃走に成功していない場合繰り返す
       while(es1.getHP()>0&&!escapeSuccess&&ps.getHP()>0){
         actionFlag=false;
-        while(!actionFlag){//actionFlagがtrueになるまで繰り返し
+        while(!actionFlag){//行動を行うまで繰り返し
           di.choiseAction();
           try{
             InputStreamReader is = new InputStreamReader(System.in);
             BufferedReader br = new BufferedReader(is);
             String buf = br.readLine();//入力された文字を受け取る
             int re = Integer.parseInt(buf);//文字をint型に
+            //1,2,3,4のなにが入力されたか
             if(re == 1){
+              //通常攻撃の処理
               actionFlag = normalAttack(ps, es1, di);
             }else if(re == 2){
+              //特技の処理
               actionFlag = skillAttack(ps, es1, di);
             }else if(re == 3){
+              //道具の処理
               actionFlag = itemUse(ps, es1, di);
             }else if(re == 4){
+              //逃げるの処理
               actionFlag = true;
               escapeSuccess = escape(ps, es1, di);
             }else{
@@ -32,8 +38,9 @@ class RoleMain {
           }catch(Exception e){
           }
         }
+        //敵のHPが残っていてなおかつ逃走に成功していない場合に実行
         if(es1.getHP()>0&&!escapeSuccess){
-          enemyTurn(ps, es1, di);
+          enemyTurn(ps, es1, di);//敵の行動の処理へ
         }
         di.statusDisplay(ps, es1);
     }
@@ -71,6 +78,7 @@ class RoleMain {
       String buf = br.readLine();//入力された文字を受け取る
       int re = Integer.parseInt(buf);
       if(re == 1){
+        //MPが消費MPを上回っていたら行動できる
         if(ps.getMP()>=ps.getSkillCost()){
           int damage;//ダメージ計算用変数
           damage = damageCalc(ps.getAttack(), ps.getSkillBonus());//ダメージ計算
@@ -93,9 +101,10 @@ class RoleMain {
     try{
       InputStreamReader is = new InputStreamReader(System.in);
       BufferedReader br = new BufferedReader(is);
-      String buf = br.readLine();//入力された文字を受け取る
+      String buf = br.readLine();
       int re = Integer.parseInt(buf);
       if(re == 1){
+        //個数が足りているかどうか
         if(ps.getItemCount()-1>=0){
           int damage=ps.getItemEffect();//ダメージ計算用変数
           ps.itemLost();
@@ -113,14 +122,14 @@ class RoleMain {
 
   //逃走判定用
   public static boolean escape(PlayerStatus ps, EnemyStatus es, Display di){
-    int rand = (int)(Math.random()*100);
-      if(rand > es.getEscape()){
-        System.out.println("逃走失敗");
-          return false;
-      }else{
-        System.out.println("逃走成功");
-        return true;
-      }
+    int rand = (int)(Math.random()*100);//0~100までの乱数
+    if(rand > es.getEscape()){
+      System.out.println("逃走失敗");
+      return false;
+    }else{
+      System.out.println("逃走成功");
+      return true;
+    }
   }
 
   //相手の行動

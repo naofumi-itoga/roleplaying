@@ -27,7 +27,7 @@ class Display {
       System.out.println((d*-1) + "の回復");
     }
   }
-  //敵絵のダメージを表示
+  //敵へのダメージを表示
   void damageDisplay(int d, EnemyStatus es){
     System.out.println("敵に" + d + "のダメージを与えた");
   }
