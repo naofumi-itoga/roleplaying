@@ -2,21 +2,32 @@
 class Item{
   private int itemEffect;
   private int itemCount;
+  private String itemName;
 
-
-  Item(int x, int y){
+  //Item‚Ìî•ñ‚ğŒˆ’è‚·‚é
+  Item(int x, int y, String s){
      itemEffect= x;
      itemCount = y;
+     itemName = s;
   }
-
+  //“¹‹ï‚ÌŠ”‚ğ•Ï‚¦‚é
   void countChange(int x){
     itemCount+=x;
   }
-
+  //“¹‹ï‚ÌŠ”‚ğ•Ô‚·
   int getItemCount(){
     return itemCount;
   }
+  //“¹‹ï‚ÌŒø‰Ê‚ğ•Ô‚·
   int getItemEffect(){
     return itemEffect;
+  }
+  //“¹‹ï‚Ì–¼‘O‚ğ•Ô‚·
+  String getItemName(){
+    return itemName;
+  }
+  //“¹‹ï‚ÌŒË”‚ğŒ¸‚ç‚·
+  void itemLost(){
+    itemCount--;
   }
 }
