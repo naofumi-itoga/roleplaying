@@ -7,6 +7,7 @@ class PlayerStatus {
   private Attribution playerAttribution;
   private Skill playerSkill;
   private Item playerItem;
+  private StateEffect playerState;
   //オブジェクトの初期データを決定する
   PlayerStatus(int x,int y,int z){
     playerHP = x;
@@ -15,6 +16,7 @@ class PlayerStatus {
     playerSkill = new Skill(1.8, 2);
     playerItem = new Item(-60, 1, "薬草");
     playerAttribution = new Attribution();
+    playerState = new StateEffect();
   }
 //名前を決めるメソッド
   void nameSet(String str){
@@ -71,5 +73,15 @@ class PlayerStatus {
   }
   int getAttribution(){
     return playerAttribution.getAttribution();
+  }
+  void setStateEffect(int x){
+     playerState.setStateEffect(x);
+  }
+
+  boolean getStateEffect(){
+    return playerState.getStateEffect();
+  }
+  boolean checkStateEffect(){
+    return playerState.checkStateEffect();
   }
 }

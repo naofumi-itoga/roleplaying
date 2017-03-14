@@ -1,16 +1,23 @@
 import java.io.*;
 
 class RoleMain {
+  static int PLHP = 200;
+  static int PLMP = 10;
+  static int CPHP = 250;
+  public static int PARALYSIS = 1;
   //Main、流れの制御をおこなう
   public static void main(String args[]){
     boolean escapeSuccess=false;//逃げることに成功したかどうか
     boolean actionFlag;//行動したかどうか
-    PlayerStatus ps = new PlayerStatus(100, 10, 20);//プレイヤーのステータス
-    EnemyStatus es1 = new EnemyStatus(175, 22, 60);//CPUのステータス
+    PlayerStatus ps = new PlayerStatus(PLHP, PLMP, 20);//プレイヤーのステータス
+    EnemyStatus es1 = new EnemyStatus(CPHP, 22, 60);//CPUのステータス
     Display di = new Display(ps, es1);//コンソールの描画関係
     //プレイヤーと敵、両方のHPが残っていて、逃走に成功していない場合繰り返す
       while(es1.getHP()>0&&!escapeSuccess&&ps.getHP()>0){
         actionFlag=false;
+        if(beforeAttackEffect(ps)){
+          actionFlag=true;
+        }
         while(!actionFlag){//行動を行うまで繰り返し
           di.choiseAction();
           try{
@@ -73,7 +80,7 @@ class RoleMain {
   //敵の攻撃：相性
   public static int damageCalc(int at, EnemyStatus es, PlayerStatus ps){
     double attributionBonus = getAttributionBonus(es, ps);
-    int rand = (int)(Math.random()*40*attributionBonus)+80;//80~12までの範囲の乱数
+    int rand = (int)(Math.random()*40)+80;//80~12までの範囲の乱数
     return (int)((at*rand*attributionBonus)/100);
   }
 
@@ -151,10 +158,21 @@ class RoleMain {
 
   //相手の行動
   public static void enemyTurn(PlayerStatus ps,EnemyStatus es, Display di){
-    int damage;//ダメージ計算用変数
-    damage = damageCalc(es.getAttack(), es, ps);//ダメージ計算
-    ps.HPCalc(damage);
-    di.damageDisplay(damage,ps);
+    int rand = (int)(Math.random()*100);
+    if(rand>=99){
+      int damage;//ダメージ計算用変数
+      damage = damageCalc(es.getAttack(), es, ps);//ダメージ計算
+      ps.HPCalc(damage);
+      di.damageDisplay(damage,ps);
+    }else{
+      if(!ps.checkStateEffect()){
+        ps.setStateEffect(PARALYSIS);
+        System.out.println("麻痺攻撃を食らった");
+      }
+      else{
+        System.out.println("すでに麻痺していたため麻痺攻撃を食らわなかった");
+      }
+    }
   }
 
   //属性による強弱
@@ -169,6 +187,7 @@ class RoleMain {
       return 1.0;
     }
   }
+  //属性による強弱（敵）
   public static double getAttributionBonus(EnemyStatus es, PlayerStatus ps){
     if(es.getAttribution()-ps.getAttribution() == -2
         ||es.getAttribution()-ps.getAttribution() == 1){
@@ -179,5 +198,11 @@ class RoleMain {
     }else{
       return 1.0;
     }
+  }
+  public static boolean beforeAttackEffect(PlayerStatus ps){
+    if(ps.getStateEffect()){
+      return true;
+    }
+    return false;
   }
 }
