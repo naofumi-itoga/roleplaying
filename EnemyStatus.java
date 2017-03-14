@@ -6,9 +6,13 @@ class EnemyStatus {
   private int escapeProbability;
   private Attribution enemyAttribution;
   private int enemyLevel;
+  private Item enemyUseItem;
+  private int enemyMaxHP;
   //オブジェクトの初期データを決定する
   EnemyStatus(int x, int y, int z){
-    enemyHP = x;
+
+    enemyMaxHP = x;
+    enemyHP = enemyMaxHP;;
     enemyAttack = y;
     escapeProbability = z;
     enemyAttribution = new Attribution();
@@ -23,9 +27,11 @@ class EnemyStatus {
         upStates[j] += rnd;
       }
     }
-    enemyHP = upStates[0]*10;
+    enemyMaxHP = upStates[0]*10;
+    enemyHP = enemyMaxHP;
     enemyAttack = upStates[1];
     enemyAttribution = new Attribution();
+    enemyUseItem = new Item(-enemyHP/5, 1, "薬草");
   }
   //CPUのHPを計算するメソッド
   void HPCalc(int d){
@@ -50,5 +56,23 @@ class EnemyStatus {
   }
   int getLevel(){
     return enemyLevel;
+  }
+  int getMaxHP(){
+    return enemyMaxHP;
+  }
+  int getItemCount(){
+    return enemyUseItem.getItemCount();
+  }
+  //Itemクラスを読み取りアイテムの効果を返す
+  int getItemEffect(){
+    return enemyUseItem.getItemEffect();
+  }
+  //アイテムの名前を返す
+  String getItemName(){
+    return enemyUseItem.getItemName();
+  }
+  //アイテムの所持数を減らす
+  void itemLost(){
+    enemyUseItem.itemLost();
   }
 }

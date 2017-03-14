@@ -9,23 +9,19 @@ class PlayerStatus {
   private Item playerItem;
   private StateEffect playerState;
   private int playerLevel;
+  private int playerMaxHP;
+  private int playerMaxMP;
   //オブジェクトの初期データを決定する(直接決定)
   PlayerStatus(int x,int y,int z){
-    int upStates[]= new int[3];
-    for(int i=0;i<playerLevel;i++){
-      for(int j=0;j<upStates.length;j++){
-        int rnd = (int)(Math.random()*3);
-        System.out.println("この数上がった"+rnd);
-        upStates[j] += rnd;
-      }
-    }
-    playerHP = x+upStates[0];
-    playerMP = y+upStates[1];
-    playerAttack = z+upStates[2];
+    playerMaxHP = x;
+    playerMaxMP = y;
+    playerAttack = z;
     playerSkill = new Skill(1.8, 2);
     playerItem = new Item(-playerHP/5, 1, "薬草");
     playerAttribution = new Attribution();
     playerState = new StateEffect();
+    playerHP = playerMaxHP;
+    playerMP = playerMaxMP;
   }
   //オブジェクトの初期データを決定する(レベルにより決定)
   PlayerStatus(int x){
@@ -38,13 +34,15 @@ class PlayerStatus {
         upStates[j] += rnd;
       }
     }
-    playerHP = upStates[0]*10;
-    playerMP = upStates[1];
+    playerMaxHP = upStates[0]*10;
+    playerMaxMP = upStates[1];
     playerAttack = upStates[2];
     playerSkill = new Skill(1.8, 2);
     playerItem = new Item(-playerHP/5, 1, "薬草");
     playerAttribution = new Attribution();
     playerState = new StateEffect();
+    playerHP = playerMaxHP;
+    playerMP = playerMaxMP;
   }
 //名前を決めるメソッド
   void nameSet(String str){

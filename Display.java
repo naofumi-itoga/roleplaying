@@ -33,7 +33,11 @@ class Display {
   }
   //敵へのダメージを表示
   void damageDisplay(int d, EnemyStatus es){
-    System.out.println("敵に" + d + "のダメージを与えた");
+    if(d>=0){
+      System.out.println("敵に" + d + "のダメージを与えた");
+    }else{
+      System.out.println("敵は" + (d*-1) + "の回復");
+    }
   }
   //行動選択の文章を表示する
   void choiseAction(){

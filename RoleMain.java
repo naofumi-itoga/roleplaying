@@ -123,7 +123,8 @@ class RoleMain {
 
   //道具を使用するメソッド
   public static boolean itemUse(PlayerStatus ps, EnemyStatus es, Display di){
-    System.out.println(ps.getItemName() + "を使用しますか?　所持数:" + ps.getItemCount() + "\n1.YES 2.NO");
+    System.out.println(ps.getItemName() + "を使用しますか?　所持数:"
+                        + ps.getItemCount() + "\n1.YES 2.NO");
     try{
       InputStreamReader is = new InputStreamReader(System.in);
       BufferedReader br = new BufferedReader(is);
@@ -160,19 +161,25 @@ class RoleMain {
 
   //相手の行動
   public static void enemyTurn(PlayerStatus ps,EnemyStatus es, Display di){
-    int rand = (int)(Math.random()*100);
-    if(rand>=20){
-      int damage;//ダメージ計算用変数
-      damage = damageCalc(es.getAttack(), es, ps);//ダメージ計算
-      ps.HPCalc(damage);
-      di.damageDisplay(damage,ps);
+    if(es.getHP()<=es.getMaxHP()/4&&es.getItemCount()-1>=0){
+      int damage=es.getItemEffect();//ダメージ計算用変数
+      es.itemLost();
+      es.HPCalc(damage);
+      di.damageDisplay(damage,es);
     }else{
-      if(!ps.checkStateEffect()){
-        ps.setStateEffect(PARALYSIS);
-        System.out.println("麻痺攻撃を食らった");
-      }
-      else{
-        System.out.println("すでに麻痺していたため麻痺攻撃を食らわなかった");
+      int rand = (int)(Math.random()*100);
+      if(rand>=20){
+        int damage;//ダメージ計算用変数
+        damage = damageCalc(es.getAttack(), es, ps);//ダメージ計算
+        ps.HPCalc(damage);
+        di.damageDisplay(damage,ps);
+      }else{
+        if(!ps.checkStateEffect()){
+          ps.setStateEffect(PARALYSIS);
+          System.out.println("麻痺攻撃を食らった");
+        }else{
+          System.out.println("すでに麻痺していたため麻痺攻撃を食らわなかった");
+        }
       }
     }
   }
