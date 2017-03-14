@@ -9,8 +9,10 @@ class RoleMain {
   public static void main(String args[]){
     boolean escapeSuccess=false;//逃げることに成功したかどうか
     boolean actionFlag;//行動したかどうか
-    PlayerStatus ps = new PlayerStatus(PLHP, PLMP, 20);//プレイヤーのステータス
-    EnemyStatus es1 = new EnemyStatus(CPHP, 22, 60);//CPUのステータス
+    //PlayerStatus ps = new PlayerStatus(PLHP, PLMP, 20);//プレイヤーのステータス作成
+    PlayerStatus ps = new PlayerStatus((int)(Math.random()*30)+1);//プレイヤーのレベルで作成
+    //EnemyStatus es1 = new EnemyStatus(CPHP, 22, 60);//CPUのステータス作成
+    EnemyStatus es1 = new EnemyStatus((int)(Math.random()*35)+1);//CPUのレベルで作成
     Display di = new Display(ps, es1);//コンソールの描画関係
     //プレイヤーと敵、両方のHPが残っていて、逃走に成功していない場合繰り返す
       while(es1.getHP()>0&&!escapeSuccess&&ps.getHP()>0){
@@ -159,7 +161,7 @@ class RoleMain {
   //相手の行動
   public static void enemyTurn(PlayerStatus ps,EnemyStatus es, Display di){
     int rand = (int)(Math.random()*100);
-    if(rand>=99){
+    if(rand>=20){
       int damage;//ダメージ計算用変数
       damage = damageCalc(es.getAttack(), es, ps);//ダメージ計算
       ps.HPCalc(damage);

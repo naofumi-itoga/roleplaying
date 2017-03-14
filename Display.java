@@ -1,14 +1,18 @@
 class Display {
   Display(PlayerStatus ps, EnemyStatus es){
     System.out.printf("\033[2J");
+    System.out.println("©•ª‚ÌLV:" + ps.getLevel());
     System.out.println("©•ª‚ÌHP:" + ps.getHP());
     System.out.println("©•ª‚ÌMP:" + ps.getMP());
+    System.out.println("“G‚ÌLV:" + es.getLevel());
     System.out.println("“G‚ÌHP:" + es.getHP());
   }
   //HP‚ÆMP‚ğ•\¦‚·‚éƒƒ\ƒbƒh
   void statusDisplay(PlayerStatus ps, EnemyStatus es){
+    System.out.println("©•ª‚ÌLV:" + ps.getLevel());
     System.out.println("©•ª‚ÌHP:" + ps.getHP());
     System.out.println("©•ª‚ÌMP:" + ps.getMP());
+    System.out.println("“G‚ÌLV:" + es.getLevel());
     System.out.println("“G‚ÌHP:" + es.getHP());
   }
   //ƒRƒ“ƒ\[ƒ‹‚Ì•`‰æ‚ğ‰Šú‰»‚·‚é

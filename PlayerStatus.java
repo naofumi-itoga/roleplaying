@@ -8,13 +8,41 @@ class PlayerStatus {
   private Skill playerSkill;
   private Item playerItem;
   private StateEffect playerState;
-  //オブジェクトの初期データを決定する
+  private int playerLevel;
+  //オブジェクトの初期データを決定する(直接決定)
   PlayerStatus(int x,int y,int z){
-    playerHP = x;
-    playerMP = y;
-    playerAttack = z;
+    int upStates[]= new int[3];
+    for(int i=0;i<playerLevel;i++){
+      for(int j=0;j<upStates.length;j++){
+        int rnd = (int)(Math.random()*3);
+        System.out.println("この数上がった"+rnd);
+        upStates[j] += rnd;
+      }
+    }
+    playerHP = x+upStates[0];
+    playerMP = y+upStates[1];
+    playerAttack = z+upStates[2];
     playerSkill = new Skill(1.8, 2);
-    playerItem = new Item(-60, 1, "薬草");
+    playerItem = new Item(-playerHP/5, 1, "薬草");
+    playerAttribution = new Attribution();
+    playerState = new StateEffect();
+  }
+  //オブジェクトの初期データを決定する(レベルにより決定)
+  PlayerStatus(int x){
+    playerLevel = x;
+    int upStates[]= new int[3];
+    for(int i=0;i<playerLevel;i++){
+      for(int j=0;j<upStates.length;j++){
+        int rnd = (int)(Math.random()*3);
+        System.out.println("この数上がった"+rnd);
+        upStates[j] += rnd;
+      }
+    }
+    playerHP = upStates[0]*10;
+    playerMP = upStates[1];
+    playerAttack = upStates[2];
+    playerSkill = new Skill(1.8, 2);
+    playerItem = new Item(-playerHP/5, 1, "薬草");
     playerAttribution = new Attribution();
     playerState = new StateEffect();
   }
@@ -83,5 +111,8 @@ class PlayerStatus {
   }
   boolean checkStateEffect(){
     return playerState.checkStateEffect();
+  }
+  int getLevel(){
+    return playerLevel;
   }
 }
