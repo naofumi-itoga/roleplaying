@@ -49,7 +49,7 @@ class RoleMain {
   }
 
 //ダメージの計算を行うメソッド
-  public static int damageCalc(int at){
+/*  public static int damageCalc(int at){
     int rand = (int)(Math.random()*40)+80;//80~12までの範囲の乱数
     return ((at*rand)/100);
   }
@@ -57,14 +57,31 @@ class RoleMain {
   public static int damageCalc(int at, double bt){
     int rand = (int)(Math.random()*40)+80;
     return (int)((at*bt*rand)/100);
+  }*/
+  //通常攻撃：相性
+  public static int damageCalc(int at, PlayerStatus ps, EnemyStatus es){
+    double attributionBonus = getAttributionBonus(ps, es);
+    int rand = (int)(Math.random()*40)+80;
+    return (int)((at*rand*attributionBonus)/100);
+  }
+  //スキル攻撃：相性
+  public static int damageCalc(int at, double bt, PlayerStatus ps, EnemyStatus es){
+    double attributionBonus = getAttributionBonus(ps, es);
+    int rand = (int)(Math.random()*40)+80;
+    return (int)((at*bt*rand*attributionBonus)/100);
+  }
+  //敵の攻撃：相性
+  public static int damageCalc(int at, EnemyStatus es, PlayerStatus ps){
+    double attributionBonus = getAttributionBonus(es, ps);
+    int rand = (int)(Math.random()*40*attributionBonus)+80;//80~12までの範囲の乱数
+    return (int)((at*rand*attributionBonus)/100);
   }
 
   //通常攻撃の判定
   public static boolean normalAttack(PlayerStatus ps, EnemyStatus es, Display di){
     int damage;//ダメージ計算用変数
-    damage = damageCalc(ps.getAttack());//ダメージ計算
+    damage = damageCalc(ps.getAttack(), ps, es);//ダメージ計算
     es.HPCalc(damage);
-    //di.statusDisplay(ps, es);
     di.damageDisplay(damage,es);
     return true;
   }
@@ -81,7 +98,7 @@ class RoleMain {
         //MPが消費MPを上回っていたら行動できる
         if(ps.getMP()>=ps.getSkillCost()){
           int damage;//ダメージ計算用変数
-          damage = damageCalc(ps.getAttack(), ps.getSkillBonus());//ダメージ計算
+          damage = damageCalc(ps.getAttack(), ps.getSkillBonus(), ps, es);//ダメージ計算
           ps.MPCalc(ps.getSkillCost());
           es.HPCalc(damage);
           di.damageDisplay(damage,es);
@@ -135,8 +152,32 @@ class RoleMain {
   //相手の行動
   public static void enemyTurn(PlayerStatus ps,EnemyStatus es, Display di){
     int damage;//ダメージ計算用変数
-    damage = damageCalc(es.getAttack());//ダメージ計算
+    damage = damageCalc(es.getAttack(), es, ps);//ダメージ計算
     ps.HPCalc(damage);
     di.damageDisplay(damage,ps);
+  }
+
+  //属性による強弱
+  public static double getAttributionBonus(PlayerStatus ps, EnemyStatus es){
+    if(ps.getAttribution()-es.getAttribution() == -2
+        ||ps.getAttribution()-es.getAttribution() == 1){
+      return 2;
+    }else if(ps.getAttribution()-es.getAttribution() == -1
+        ||ps.getAttribution()-es.getAttribution() == 2){
+      return 0.55;
+    }else{
+      return 1.0;
+    }
+  }
+  public static double getAttributionBonus(EnemyStatus es, PlayerStatus ps){
+    if(es.getAttribution()-ps.getAttribution() == -2
+        ||es.getAttribution()-ps.getAttribution() == 1){
+      return 2.;
+    }else if(es.getAttribution()-es.getAttribution() == -1
+        ||es.getAttribution()-es.getAttribution() == 2){
+      return 0.55;
+    }else{
+      return 1.0;
+    }
   }
 }

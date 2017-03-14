@@ -4,8 +4,9 @@ class PlayerStatus {
   private int playerHP;
   private int playerMP;
   private int playerAttack;
-  Skill playerSkill;
-  Item playerItem;
+  private Attribution playerAttribution;
+  private Skill playerSkill;
+  private Item playerItem;
   //オブジェクトの初期データを決定する
   PlayerStatus(int x,int y,int z){
     playerHP = x;
@@ -13,6 +14,7 @@ class PlayerStatus {
     playerAttack = z;
     playerSkill = new Skill(1.8, 2);
     playerItem = new Item(-60, 1, "薬草");
+    playerAttribution = new Attribution();
   }
 //名前を決めるメソッド
   void nameSet(String str){
@@ -66,5 +68,8 @@ class PlayerStatus {
   //アイテムの所持数を減らす
   void itemLost(){
     playerItem.itemLost();
+  }
+  int getAttribution(){
+    return playerAttribution.getAttribution();
   }
 }

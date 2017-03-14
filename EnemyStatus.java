@@ -4,11 +4,13 @@ class EnemyStatus {
   private int enemyHP;
   private int enemyAttack;
   private int escapeProbability;
+  private Attribution enemyAttribution;
   //オブジェクトの初期データを決定する
   EnemyStatus(int x, int y, int z){
     enemyHP = x;
     enemyAttack = y;
     escapeProbability = z;
+    enemyAttribution = new Attribution();
   }
   //CPUのHPを計算するメソッド
   void HPCalc(int d){
@@ -27,5 +29,8 @@ class EnemyStatus {
   //CPUに対して逃げるを選択した際の成功確率を返す
   int getEscape(){
     return escapeProbability;
+  }
+  int getAttribution(){
+    return enemyAttribution.getAttribution();
   }
 }
