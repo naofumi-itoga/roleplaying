@@ -1,5 +1,5 @@
 //CPUのステータスを保存するクラス
-class EnemyStatus {
+class Enemy {
   private String enemyName;
   private int enemyHP;
   private int enemyAttack;
@@ -9,8 +9,7 @@ class EnemyStatus {
   private Item enemyUseItem;
   private int enemyMaxHP;
   //オブジェクトの初期データを決定する
-  EnemyStatus(int x, int y, int z){
-
+  Enemy(int x, int y, int z){
     enemyMaxHP = x;
     enemyHP = enemyMaxHP;;
     enemyAttack = y;
@@ -18,7 +17,7 @@ class EnemyStatus {
     enemyAttribution = new Attribution();
   }
   //初期データをレベルによって決定する
-  EnemyStatus(int x){
+  Enemy(int x){
     enemyLevel = x;
     int upStates[]= new int[2];
     for(int i=0;i<enemyLevel;i++){
@@ -32,6 +31,7 @@ class EnemyStatus {
     enemyAttack = upStates[1];
     enemyAttribution = new Attribution();
     enemyUseItem = new Item(-enemyHP/5, 1, "薬草");
+    escapeProbability = 60;
   }
   //CPUのHPを計算するメソッド
   void HPCalc(int d){
@@ -75,7 +75,7 @@ class EnemyStatus {
     return enemyUseItem.getItemName();
   }
   //アイテムの所持数を減らす
-  void itemLost(){
-    enemyUseItem.itemLost();
+  int itemLost(){
+    return enemyUseItem.itemLost();
   }
 }

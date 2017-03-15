@@ -1,5 +1,5 @@
 //プレイヤーのステータスを保存するクラス
-class PlayerStatus {
+class Player {
   private String playerName;//プレイヤーの名前
   private int playerHP;//プレイヤーの現在のHP
   private int playerMP;//ぷれいやーの現在のMP
@@ -12,7 +12,7 @@ class PlayerStatus {
   private int playerMaxHP;//最大HP
   private int playerMaxMP;//最大MP
   //オブジェクトの初期データを決定する(直接決定)
-  PlayerStatus(int x,int y,int z){
+  Player(int x,int y,int z){
     playerMaxHP = x;
     playerMaxMP = y;
     playerAttack = z;
@@ -24,7 +24,7 @@ class PlayerStatus {
     playerMP = playerMaxMP;
   }
   //オブジェクトの初期データを決定する(レベルにより決定)
-  PlayerStatus(int x){
+  Player(int x){
     playerLevel = x;
     int upStates[]= new int[3];
     for(int i=0;i<playerLevel;i++){
@@ -93,8 +93,8 @@ class PlayerStatus {
     return playerItem.getItemName();
   }
   //アイテムの所持数を減らす
-  void itemLost(){
-    playerItem.itemLost();
+  int itemLost(){
+    return playerItem.itemLost();
   }
   //属性を返す
   int getAttribution(){
@@ -119,5 +119,9 @@ class PlayerStatus {
   //最大HPを返す
   int getMaxHP(){
     return playerMaxHP;
+  }
+
+  void countChange(int x){
+    playerItem.countChange(x);
   }
 }

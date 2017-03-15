@@ -12,7 +12,7 @@ class Item{
   }
   //“¹‹ï‚ÌŠ”‚ğ•Ï‚¦‚é
   void countChange(int x){
-    itemCount+=x;
+    itemCount = x;
   }
   //“¹‹ï‚ÌŠ”‚ğ•Ô‚·
   int getItemCount(){
@@ -27,7 +27,8 @@ class Item{
     return itemName;
   }
   //“¹‹ï‚ÌŒË”‚ğŒ¸‚ç‚·
-  void itemLost(){
+  int itemLost(){
     itemCount--;
+    return itemCount;
   }
 }

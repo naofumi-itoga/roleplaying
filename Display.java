@@ -1,5 +1,5 @@
 class Display {
-  Display(PlayerStatus ps, EnemyStatus es){
+  Display(Player ps, Enemy es){
     System.out.printf("\033[2J");
     System.out.println("自分のLV:" + ps.getLevel());
     System.out.println("自分のHP:" + ps.getHP());
@@ -8,7 +8,7 @@ class Display {
     System.out.println("敵のHP:" + es.getHP());
   }
   //HPとMPを表示するメソッド
-  void statusDisplay(PlayerStatus ps, EnemyStatus es){
+  void statusDisplay(Player ps, Enemy es){
     System.out.println("自分のLV:" + ps.getLevel());
     System.out.println("自分のHP:" + ps.getHP());
     System.out.println("自分のMP:" + ps.getMP());
@@ -24,7 +24,7 @@ class Display {
     System.out.println("" + d + "のダメージ");
   }
   //プレイヤーへのダメージおよび回復効果を表示
-  void damageDisplay(int d, PlayerStatus ps){
+  void damageDisplay(int d, Player ps){
     if(d>=0){
       System.out.println(d + "のダメージを食らった");
     }else{
@@ -32,7 +32,7 @@ class Display {
     }
   }
   //敵へのダメージを表示
-  void damageDisplay(int d, EnemyStatus es){
+  void damageDisplay(int d, Enemy es){
     if(d>=0){
       System.out.println("敵に" + d + "のダメージを与えた");
     }else{
@@ -44,7 +44,7 @@ class Display {
     System.out.println("行動を選択してください。\n1.攻撃 2.特技 3.道具 4.逃走");
   }
   //戦闘結果
-  void result(PlayerStatus ps, EnemyStatus es){
+  void result(Player ps, Enemy es){
     if(es.getHP()<=0){
       System.out.println("戦闘に勝利した");
     }else if(ps.getHP()<=0){
@@ -67,7 +67,7 @@ class Display {
       System.out.printf("\033[%dB" ,count-2);
       System.out.printf("\033[2K");
     }
-    void statusDisplay(PlayerStatus ps, EnemyStatus es, int  a){
+    void statusDisplay(Player ps, Enemy es, int  a){
       System.out.printf("\033[%dA" ,count);
       System.out.printf("\033[2K");
       System.out.println("自分のHP:" + ps.getHP());
