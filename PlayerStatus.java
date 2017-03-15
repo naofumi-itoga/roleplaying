@@ -1,16 +1,16 @@
 //プレイヤーのステータスを保存するクラス
 class PlayerStatus {
-  private String playerName;
-  private int playerHP;
-  private int playerMP;
-  private int playerAttack;
-  private Attribution playerAttribution;
-  private Skill playerSkill;
-  private Item playerItem;
-  private StateEffect playerState;
-  private int playerLevel;
-  private int playerMaxHP;
-  private int playerMaxMP;
+  private String playerName;//プレイヤーの名前
+  private int playerHP;//プレイヤーの現在のHP
+  private int playerMP;//ぷれいやーの現在のMP
+  private int playerAttack;//プレイヤーの攻撃力
+  private Attribution playerAttribution;//属性
+  private Skill playerSkill;//持っているスキル
+  private Item playerItem;//持っているアイテム
+  private StateEffect playerState;//今の状態異常
+  private int playerLevel;//レベル
+  private int playerMaxHP;//最大HP
+  private int playerMaxMP;//最大MP
   //オブジェクトの初期データを決定する(直接決定)
   PlayerStatus(int x,int y,int z){
     playerMaxHP = x;
@@ -30,7 +30,6 @@ class PlayerStatus {
     for(int i=0;i<playerLevel;i++){
       for(int j=0;j<upStates.length;j++){
         int rnd = (int)(Math.random()*3);
-        System.out.println("この数上がった"+rnd);
         upStates[j] += rnd;
       }
     }
@@ -38,7 +37,7 @@ class PlayerStatus {
     playerMaxMP = upStates[1];
     playerAttack = upStates[2];
     playerSkill = new Skill(1.8, 2);
-    playerItem = new Item(-playerHP/5, 1, "薬草");
+    playerItem = new Item(-playerMaxHP/5, 1, "薬草");
     playerAttribution = new Attribution();
     playerState = new StateEffect();
     playerHP = playerMaxHP;
@@ -73,7 +72,7 @@ class PlayerStatus {
   int getAttack(){
     return playerAttack;
   }
-  //Skikkクラスを読み取り消費MPを返す
+  //Skillクラスを読み取り消費MPを返す
   int getSkillCost(){
     return playerSkill.getSkillCost();
   }
@@ -97,20 +96,28 @@ class PlayerStatus {
   void itemLost(){
     playerItem.itemLost();
   }
+  //属性を返す
   int getAttribution(){
     return playerAttribution.getAttribution();
   }
+  //状態異常を設定する
   void setStateEffect(int x){
      playerState.setStateEffect(x);
   }
-
+  //状態異常を確認しつつ一歩進める
   boolean getStateEffect(){
     return playerState.getStateEffect();
   }
+  //状態異常を確認する
   boolean checkStateEffect(){
     return playerState.checkStateEffect();
   }
+  //レベルを返す
   int getLevel(){
     return playerLevel;
+  }
+  //最大HPを返す
+  int getMaxHP(){
+    return playerMaxHP;
   }
 }

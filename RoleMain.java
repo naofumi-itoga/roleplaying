@@ -1,17 +1,20 @@
 import java.io.*;
 
 class RoleMain {
-  static int PLHP = 200;
-  static int PLMP = 10;
-  static int CPHP = 250;
+  static int PLHP = 200;//プレイヤーのHP
+  static int PLMP = 10;//プレイヤーのMP
+  static int PLAT = 20;//プレイヤーの攻撃力
+  static int CPHP = 250;//CPUのHP
+  static int CPAT = 22;//CPUの攻撃力
+  static int CPE = 60;//CPUから逃げることができる確率
   public static int PARALYSIS = 1;
   //Main、流れの制御をおこなう
   public static void main(String args[]){
     boolean escapeSuccess=false;//逃げることに成功したかどうか
     boolean actionFlag;//行動したかどうか
-    //PlayerStatus ps = new PlayerStatus(PLHP, PLMP, 20);//プレイヤーのステータス作成
+    //PlayerStatus ps = new PlayerStatus(PLHP, PLMP, PLAT);//プレイヤーのステータス作成
     PlayerStatus ps = new PlayerStatus((int)(Math.random()*30)+1);//プレイヤーのレベルで作成
-    //EnemyStatus es1 = new EnemyStatus(CPHP, 22, 60);//CPUのステータス作成
+    //EnemyStatus es1 = new EnemyStatus(CPHP, CPAT, CPE);//CPUのステータス作成
     EnemyStatus es1 = new EnemyStatus((int)(Math.random()*35)+1);//CPUのレベルで作成
     Display di = new Display(ps, es1);//コンソールの描画関係
     //プレイヤーと敵、両方のHPが残っていて、逃走に成功していない場合繰り返す
@@ -66,6 +69,11 @@ class RoleMain {
   public static int damageCalc(int at, double bt){
     int rand = (int)(Math.random()*40)+80;
     return (int)((at*bt*rand)/100);
+  }
+  //敵の攻撃：相性
+  public static int damageCalc(int at){
+    int rand = (int)(Math.random()*40)+80;//80~12までの範囲の乱数
+    return (int)((at*rand)/100);
   }*/
   //通常攻撃：相性
   public static int damageCalc(int at, PlayerStatus ps, EnemyStatus es){
@@ -135,6 +143,9 @@ class RoleMain {
         if(ps.getItemCount()-1>=0){
           int damage=ps.getItemEffect();//ダメージ計算用変数
           ps.itemLost();
+          if(ps.getHP()-damage>=ps.getMaxHP()){
+            damage = ps.getHP()-ps.getMaxHP();
+          }
           ps.HPCalc(damage);
           di.damageDisplay(damage,ps);
           return true;
@@ -161,9 +172,13 @@ class RoleMain {
 
   //相手の行動
   public static void enemyTurn(PlayerStatus ps,EnemyStatus es, Display di){
+    //薬草を使用できるかどうか
     if(es.getHP()<=es.getMaxHP()/4&&es.getItemCount()-1>=0){
       int damage=es.getItemEffect();//ダメージ計算用変数
       es.itemLost();
+      if(es.getHP()-damage>=es.getMaxHP()){
+        damage = es.getHP()-es.getMaxHP();
+      }
       es.HPCalc(damage);
       di.damageDisplay(damage,es);
     }else{
@@ -208,6 +223,7 @@ class RoleMain {
       return 1.0;
     }
   }
+  //麻痺にかかっているか、かかっていた場合はターンを飛ばす
   public static boolean beforeAttackEffect(PlayerStatus ps){
     if(ps.getStateEffect()){
       return true;

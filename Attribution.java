@@ -5,10 +5,9 @@ class Attribution{
   private int WIND=2;
   private int attribution;
 
-  //
+  //ƒ‰ƒ“ƒ_ƒ€‚É‘®«Œˆ’è
   Attribution(){
     int rand = (int)(Math.random()*3);
-    System.out.println("‘®«‚Ínew" + rand);
     if(rand==0){
       attribution = FIRE;
     }else if(rand == 1){
@@ -17,6 +16,7 @@ class Attribution{
       attribution = WIND;
     }
   }
+  //‘®«‚ğ•Ô‚·
   int getAttribution(){
     return attribution;
   }

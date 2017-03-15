@@ -17,13 +17,13 @@ class EnemyStatus {
     escapeProbability = z;
     enemyAttribution = new Attribution();
   }
+  //初期データをレベルによって決定する
   EnemyStatus(int x){
     enemyLevel = x;
     int upStates[]= new int[2];
     for(int i=0;i<enemyLevel;i++){
       for(int j=0;j<upStates.length;j++){
         int rnd = (int)(Math.random()*3);
-        System.out.println("この数上がった"+rnd);
         upStates[j] += rnd;
       }
     }
@@ -51,12 +51,15 @@ class EnemyStatus {
   int getEscape(){
     return escapeProbability;
   }
+  //属性を返す
   int getAttribution(){
     return enemyAttribution.getAttribution();
   }
+  //レベルを返す
   int getLevel(){
     return enemyLevel;
   }
+  //さいだいHPを返す
   int getMaxHP(){
     return enemyMaxHP;
   }
