@@ -5,19 +5,27 @@ class Player {
   private int playerMP;//ぷれいやーの現在のMP
   private int playerAttack;//プレイヤーの攻撃力
   private Attribution playerAttribution;//属性
-  private Skill playerSkill;//持っているスキル
-  private Item playerItem;//持っているアイテム
+  private Skill playerSkill[] = new Skill[99];//持っているスキル
+  private Item playerItem[] = new Item[99];//持っているアイテム
   private StateEffect playerState;//今の状態異常
   private int playerLevel;//レベル
   private int playerMaxHP;//最大HP
   private int playerMaxMP;//最大MP
+  private int itemGoods = 1;//現在持っているアイテムの種類
+  private int skillGoods = 1;
+  public static final int HEALITEM = 0;//回復道具
+  public static final int ATTACKITEM = 1;//攻撃道具
+  public static final int OTHERITEM =2;//その他の道具
+  public static final int HEALSKILL = 0;//回復特技
+  public static final int ATTACKSKILL = 1;//攻撃特技
+  public static final int OTHERSKILL = 2;//その他特技
   //オブジェクトの初期データを決定する(直接決定)
   Player(int x,int y,int z){
     playerMaxHP = x;
     playerMaxMP = y;
     playerAttack = z;
-    playerSkill = new Skill(1.8, 2);
-    playerItem = new Item(-playerHP/5, 1, "薬草");
+    playerSkill[0] = new Skill(1.8, 2);
+    playerItem[0] = new Item(-playerHP/5, 1, HEALITEM, "薬草");
     playerAttribution = new Attribution();
     playerState = new StateEffect();
     playerHP = playerMaxHP;
@@ -36,8 +44,8 @@ class Player {
     playerMaxHP = upStates[0]*10;
     playerMaxMP = upStates[1];
     playerAttack = upStates[2];
-    playerSkill = new Skill(1.8, 2);
-    playerItem = new Item(-playerMaxHP/5, 1, "薬草");
+    playerSkill[0] = new Skill(1.8, 2, "スラッシュ");
+    playerItem[0] = new Item(-playerMaxHP/5, 1, HEALITEM, "薬草");
     playerAttribution = new Attribution();
     playerState = new StateEffect();
     playerHP = playerMaxHP;
@@ -73,28 +81,28 @@ class Player {
     return playerAttack;
   }
   //Skillクラスを読み取り消費MPを返す
-  int getSkillCost(){
-    return playerSkill.getSkillCost();
+  int getSkillCost(int x){
+    return playerSkill[x].getSkillCost();
   }
   //Skillクラスを読み取り倍率を返す
-  double getSkillBonus(){
-    return playerSkill.getSkillBonus();
+  double getSkillBonus(int x){
+    return playerSkill[x].getSkillBonus();
   }
   //Itemクラスを読み取りアイテムの所持数を返す
-  int getItemCount(){
-    return playerItem.getItemCount();
+  int getItemCount(int x){
+    return playerItem[x].getItemCount();
   }
   //Itemクラスを読み取りアイテムの効果を返す
-  int getItemEffect(){
-    return playerItem.getItemEffect();
+  int getItemEffect(int x){
+    return playerItem[x].getItemEffect();
   }
   //アイテムの名前を返す
-  String getItemName(){
-    return playerItem.getItemName();
+  String getItemName(int x){
+    return playerItem[x].getItemName();
   }
   //アイテムの所持数を減らす
-  int itemLost(){
-    return playerItem.itemLost();
+  int itemLost(int x){
+    return playerItem[x].itemLost();
   }
   //属性を返す
   int getAttribution(){
@@ -120,8 +128,37 @@ class Player {
   int getMaxHP(){
     return playerMaxHP;
   }
-
-  void countChange(int x){
-    playerItem.countChange(x);
+  //アイテムの所持数を変える
+  void countChange(int x, int i){
+    playerItem[i].countChange(x);
+  }
+  //アイテムを追加する
+  void setItem(int x, int y, int z, String s){
+    playerItem[itemGoods] = new Item(x, y, z, s);
+    itemGoods++;
+    if(itemGoods >= 100){
+      itemGoods=99;
+    }
+  }
+  //所持しているアイテムの種類数を返す
+  int getItemGoods(){
+    return itemGoods;
+  }
+  //どういったアイテムか返す
+  int getItemType(int x){
+    return playerItem[x].getItemType();
+  }
+  void setSkill(int x, int y, String s){
+    playerSkill[skillGoods] = new Skill(x, y, s);
+    skillGoods++;
+    if(skillGoods >= 100){
+      skillGoods=99;
+    }
+  }
+  int getSkillGoods(){
+    return skillGoods;
+  }
+  String getSkillName(int x){
+    return playerSkill[x].getSkillName();
   }
 }

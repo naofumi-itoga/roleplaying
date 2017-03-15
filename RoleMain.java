@@ -30,24 +30,36 @@ class RoleMain {
   public static final double ATTRIBUTION_BUFF = 2.0;//得意な時のボーナス
   public static final double ATTRIBUTION_DEBUFF = 0.5;//苦手な時のボーナス
   public static final double ATTRIBUTION_NOBUFF = 1.0;//通常の攻撃
+  public static final int HEALITEM = 0;//回復道具
+  public static final int ATTACKITEM = 1;//攻撃道具
+  public static final int OTHERITEM = 2;//その他道具
+  public static final int HEALSKILL = 0;//回復特技
+  public static final int ATTACKSKILL = 1;//攻撃特技
+  public static final int OTHERSKILL = 2;//その他特技
 
   //Main、流れの制御をおこなう
   public static void main(String args[]){
-    boolean escapeSuccess=false;//逃げることに成功したかどうか
+    boolean escapeSuccess;//逃げることに成功したかどうか
     boolean actionFlag;//行動したかどうか
+    boolean continuation=true;
     //Player player = new Player(PLHP, PLMP, PLAT);//プレイヤーのステータス作成
     Player player = new Player((int)(Math.random()*PLAYERLEVELWIDTH)+LEVELLOWEST);//プレイヤーのレベルで作成
     //Enemy enemy1 = new Enemy(CPHP, CPAT, CPE);//CPUのステータス作成
-    Enemy enemy1 = new Enemy((int)(Math.random()*ENEMYLEVELWIDTH)+LEVELLOWEST);//CPUのレベルで作成
-    Display di = new Display(player, enemy1);//コンソールの描画関係
-    //プレイヤーと敵、両方のHPが残っていて、逃走に成功していない場合繰り返す
+    //Enemy enemy1 = new Enemy((int)(Math.random()*ENEMYLEVELWIDTH)+LEVELLOWEST);//CPUのレベルで作成
+    //Display display = new Display(player, enemy1);//コンソールの描画関係
+    player.setSkill(4,10,"ブルクラッシュ");
+    while(continuation){
+      escapeSuccess=false;
+      Enemy enemy1 = new Enemy((int)(Math.random()*ENEMYLEVELWIDTH)+LEVELLOWEST);//CPUのレベルで作成
+      Display display = new Display(player, enemy1);//コンソールの描画関係
+      //プレイヤーと敵、両方のHPが残っていて、逃走に成功していない場合繰り返す
       while(enemy1.getHP() > DOWNHP && !escapeSuccess && player.getHP() > DOWNHP){
         actionFlag=false;
         if(beforeAttackEffect(player)){
           actionFlag=true;
         }
         while(!actionFlag){//行動を行うまで繰り返し
-          di.choiseAction();
+          display.choiseAction();
           try{
             InputStreamReader is = new InputStreamReader(System.in);
             BufferedReader br = new BufferedReader(is);
@@ -56,49 +68,68 @@ class RoleMain {
             //1,2,3,4のなにが入力されたか
             switch(re){
               case (ATTACKCOMMAND):
-                actionFlag = normalAttack(player, enemy1, di);
+                actionFlag = normalAttack(player, enemy1, display);
                 break;
               case (SKILLCOMMAND):
-                actionFlag = skillAttack(player, enemy1, di);
+                actionFlag = skillAttack(player, enemy1, display);
                 break;
               case (ITEMCOMMAND):
-                actionFlag = itemUse(player, enemy1, di);
+                actionFlag = itemUse(player, enemy1, display);
                 break;
               case (ESCAPECOMMAND):
                 actionFlag = true;
-                escapeSuccess = escape(player, enemy1, di);
+                escapeSuccess = escape(player, enemy1, display);
                 break;
               default:
                 System.out.println("1~4の中から選択してください");
             }
             /*if(re == ATTACKCOMMAND){
               //通常攻撃の処理
-              actionFlag = normalAttack(player, enemy1, di);
+              actionFlag = normalAttack(player, enemy1, display);
             }else if(re == SKILLCOMMAND){
               //特技の処理
-              actionFlag = skillAttack(player, enemy1, di);
+              actionFlag = skillAttack(player, enemy1, display);
             }else if(re == ITEMCOMMAND){
               //道具の処理
-              actionFlag = itemUse(player, enemy1, di);
+              actionFlag = itemUse(player, enemy1, display);
             }else if(re == ESCAPECOMMAND){
               //逃げるの処理
               actionFlag = true;
-              escapeSuccess = escape(player, enemy1, di);
+              escapeSuccess = escape(player, enemy1, display);
             }else{
               System.out.println("1~4の中から選択してください");
             }*/
-
           }catch(Exception e){
             System.out.println("数字を入力してください");
           }
         }
         //敵のHPが残っていてなおかつ逃走に成功していない場合に実行
         if(enemy1.getHP() > DOWNHP && !escapeSuccess){
-          enemyTurn(player, enemy1, di);//敵の行動の処理へ
+          enemyTurn(player, enemy1, display);//敵の行動の処理へ
         }
-        di.statusDisplay(player, enemy1);
+        display.statusDisplay(player, enemy1);
+      }
+      display.result(player, enemy1);
+      gainItem(player, enemy1);
+      if(player.getHP()>0){
+        System.out.println("次へ進みますか？1:YES, 2:NO");
+        try{
+          InputStreamReader is = new InputStreamReader(System.in);
+          BufferedReader br = new BufferedReader(is);
+          String buf = br.readLine();//入力された文字を受け取る
+          int re = Integer.parseInt(buf);
+          if(re == YES){
+            continuation = true;
+          }else{
+            continuation = false;
+          }
+        }catch(Exception e){
+          System.out.println("数字を入力してください");
+        }
+      }else{
+        continuation = false;
+      }
     }
-    di.result(player, enemy1);
     System.out.println("owari");
   }
 
@@ -137,73 +168,92 @@ class RoleMain {
   }
 
   //通常攻撃の判定
-  public static boolean normalAttack(Player player, Enemy enemy, Display di){
+  public static boolean normalAttack(Player player, Enemy enemy, Display display){
     int damage;//ダメージ計算用変数
     damage = damageCalc(player.getAttack(), player, enemy);//ダメージ計算
     enemy.HPCalc(damage);
-    di.damageDisplay(damage,enemy);
+    display.damageDisplay(damage,enemy);
     return true;
   }
 
   //特技による攻撃の判定
-  public static boolean skillAttack(Player player, Enemy enemy, Display di){
-    System.out.println("特技を使用しますか? 消費MP" + player.getSkillCost() + "\n1.YES 2.NO");
-    try{
-      InputStreamReader is = new InputStreamReader(System.in);
-      BufferedReader br = new BufferedReader(is);
-      String buf = br.readLine();//入力された文字を受け取る
-      int re = Integer.parseInt(buf);
-      if(re == YES){
-        //MPが消費MPを上回っていたら行動できる
-        if(player.getMP() >= player.getSkillCost()){
-          int damage;//ダメージ計算用変数
-          damage = damageCalc(player.getAttack(), player.getSkillBonus(), player, enemy);//ダメージ計算
-          player.MPCalc(player.getSkillCost());
-          enemy.HPCalc(damage);
-          di.damageDisplay(damage,enemy);
-          return true;
-        }else{
-          System.out.println("MPが足りない");
+  public static boolean skillAttack(Player player, Enemy enemy, Display display){
+    for(int i = 0; i<player.getSkillGoods(); i++){
+      System.out.println(player.getSkillName(i) + "を使用しますか? 消費MP" + player.getSkillCost(i) + "\n1.YES 2.NO");
+      try{
+        InputStreamReader is = new InputStreamReader(System.in);
+        BufferedReader br = new BufferedReader(is);
+        String buf = br.readLine();//入力された文字を受け取る
+        int re = Integer.parseInt(buf);
+        if(re == YES){
+          //MPが消費MPを上回っていたら行動できる
+          if(player.getMP() >= player.getSkillCost(i)){
+            int damage;//ダメージ計算用変数
+            damage = damageCalc(player.getAttack(), player.getSkillBonus(i), player, enemy);//ダメージ計算
+            player.MPCalc(player.getSkillCost(i));
+            enemy.HPCalc(damage);
+            display.damageDisplay(damage,enemy);
+            return true;
+          }else{
+            System.out.println("MPが足りない");
+          }
         }
+      }catch(Exception e){
+        System.out.println("数字を入力してください");
       }
-    }catch(Exception e){
-      System.out.println("数字を入力してください");
     }
     return false;
   }
 
   //道具を使用するメソッド
-  public static boolean itemUse(Player player, Enemy enemy, Display di){
-    System.out.println(player.getItemName() + "を使用しますか?　所持数:"
-                        + player.getItemCount() + "\n1.YES 2.NO");
-    try{
-      InputStreamReader is = new InputStreamReader(System.in);
-      BufferedReader br = new BufferedReader(is);
-      String buf = br.readLine();
-      int re = Integer.parseInt(buf);
-      if(re == YES){
-        //個数が足りているかどうか
-        if(player.itemLost() >= NO_ITEM){
-          int damage=player.getItemEffect();//ダメージ計算用変数
-          if(player.getHP()-damage >= player.getMaxHP()){
-            damage = player.getHP()-player.getMaxHP();
+  public static boolean itemUse(Player player, Enemy enemy, Display display){
+    for(int i = 0; i<player.getItemGoods(); i++){
+      if(player.getItemCount(i) > 0){
+        System.out.println(player.getItemName(i) + "を使用しますか?　所持数:"
+                        + player.getItemCount(i) + "\n1.YES 2.NO");
+        try{
+          InputStreamReader is = new InputStreamReader(System.in);
+          BufferedReader br = new BufferedReader(is);
+          String buf = br.readLine();
+          int re = Integer.parseInt(buf);
+          if(re == YES){
+            //個数が足りているかどうか
+            if(player.itemLost(i) >= NO_ITEM){
+              switch(player.getItemType(i)){
+                case (HEALITEM):
+                  int damage=player.getItemEffect(i);//ダメージ計算用変数
+                  if(player.getHP()-damage >= player.getMaxHP()){
+                    damage = player.getHP()-player.getMaxHP();
+                  }
+                  player.HPCalc(damage);
+                  display.damageDisplay(damage,player);
+                  return true;
+                case (ATTACKITEM):
+                  damage=player.getItemEffect(i);//ダメージ計算用変数
+                  enemy.HPCalc(damage);
+                  display.damageDisplay(damage,enemy);
+                  return true;
+                default:
+                  System.out.println("効果はなかった");
+                  return true;
+              }
+            }else{
+              player.countChange(NO_ITEM, i);
+              System.out.println("薬草が足りない");
+              return false;
+            }
           }
-          player.HPCalc(damage);
-          di.damageDisplay(damage,player);
-          return true;
-        }else{
-          player.countChange(NO_ITEM);
-          System.out.println("薬草が足りない");
+        }catch(Exception e){
+          System.out.println("数字を入力してください");
+          return false;
         }
       }
-    }catch(Exception e){
-      System.out.println("数字を入力してください");
     }
     return false;
   }
 
   //逃走判定用
-  public static boolean escape(Player player, Enemy enemy, Display di){
+  public static boolean escape(Player player, Enemy enemy, Display display){
     int rand = (int)(Math.random()*HUNDREDPERCENT);//0~100までの乱数
     if(rand > enemy.getEscape()){
       System.out.println("逃走失敗");
@@ -215,7 +265,7 @@ class RoleMain {
   }
 
   //相手の行動
-  public static void enemyTurn(Player player,Enemy enemy, Display di){
+  public static void enemyTurn(Player player,Enemy enemy, Display display){
     //薬草を使用できるかどうか
     if(enemy.getHP() <= enemy.getMaxHP()/PINCH_HP && enemy.itemLost() >= NO_ITEM){
       int damage=enemy.getItemEffect();//ダメージ計算用変数
@@ -224,14 +274,14 @@ class RoleMain {
         damage = enemy.getHP()-enemy.getMaxHP();
       }
       enemy.HPCalc(damage);
-      di.damageDisplay(damage,enemy);
+      display.damageDisplay(damage,enemy);
     }else{
       int rand = (int)(Math.random()*HUNDREDPERCENT);
       if(rand>=PARALYSISATTACKPROBABILITY){
         int damage;//ダメージ計算用変数
         damage = damageCalc(enemy.getAttack(), enemy, player);//ダメージ計算
         player.HPCalc(damage);
-        di.damageDisplay(damage,player);
+        display.damageDisplay(damage,player);
       }else{
         if(!player.checkStateEffect()){
           player.setStateEffect(PARALYSIS);
@@ -273,5 +323,22 @@ class RoleMain {
       return true;
     }
     return false;
+  }
+  //アイテム獲得
+  public static void gainItem(Player player, Enemy enemy){
+    if(enemy.getHP()<=0){
+      String str;
+      if((int)(Math.random()*HUNDREDPERCENT)>=50){
+        str = "薬草";
+        player.setItem((int)(Math.random()*-HUNDREDPERCENT), (int)(Math.random()*10)+1,
+                                                          HEALITEM, str);
+      }else{
+        str = "石";
+        player.setItem((int)(Math.random()*HUNDREDPERCENT), (int)(Math.random()*5)+1,
+                                                          ATTACKITEM, str);
+      }
+      System.out.println(player.getItemName(player.getItemGoods()-1) + "を" +
+                 player.getItemCount(player.getItemGoods()-1) + "手に入れた");
+    }
   }
 }

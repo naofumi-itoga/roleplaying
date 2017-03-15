@@ -1,13 +1,16 @@
 //CPUのステータスを保存するクラス
 class Enemy {
-  private String enemyName;
-  private int enemyHP;
-  private int enemyAttack;
-  private int escapeProbability;
-  private Attribution enemyAttribution;
-  private int enemyLevel;
-  private Item enemyUseItem;
-  private int enemyMaxHP;
+  private String enemyName;//敵の名前
+  private int enemyHP;//敵のHP
+  private int enemyAttack;//敵の攻撃力
+  private int escapeProbability;//敵から逃げられる確率
+  private Attribution enemyAttribution;//敵の属性
+  private int enemyLevel;//敵のレベル
+  private Item enemyUseItem;//敵の使用できるアイテム
+  private int enemyMaxHP;//敵の最大HP
+  public static final int HEALITEM = 0;//敵の回復道具
+  public static final int ATTACKITEM = 1;//敵の攻撃道具
+  public static final int OTHERITEM = 2;//敵のその他の道具
   //オブジェクトの初期データを決定する
   Enemy(int x, int y, int z){
     enemyMaxHP = x;
@@ -30,7 +33,7 @@ class Enemy {
     enemyHP = enemyMaxHP;
     enemyAttack = upStates[1];
     enemyAttribution = new Attribution();
-    enemyUseItem = new Item(-enemyHP/5, 1, "薬草");
+    enemyUseItem = new Item(-enemyHP/5, 1, HEALITEM, "薬草");
     escapeProbability = 60;
   }
   //CPUのHPを計算するメソッド

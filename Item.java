@@ -1,14 +1,19 @@
 //道具の情報を保存するメソッド
 class Item{
-  private int itemEffect;
-  private int itemCount;
-  private String itemName;
+  private int itemEffect;//アイテムの効果量
+  private int itemCount;//アイテムの数
+  private String itemName;//アイテムの名前
+  public static final int HEALITEM = 0;//回復アイテム
+  public static final int ATTACKITEM = 1;//攻撃アイテム
+  public static final int OTHERITEM = 2;//その他アイテム
+  private int itemType;//このアイテムの種類
 
   //Itemの情報を決定する
-  Item(int x, int y, String s){
+  Item(int x, int y, int z, String s){
      itemEffect= x;
      itemCount = y;
      itemName = s;
+     itemType = z;
   }
   //道具の所持数を変える
   void countChange(int x){
@@ -30,5 +35,16 @@ class Item{
   int itemLost(){
     itemCount--;
     return itemCount;
+  }
+  //アイテムを追加する
+  void setItem(int x, int y, int z, String s){
+    itemEffect= x;
+    itemCount = y;
+    itemName = s;
+    itemType = z;
+  }
+  //アイテムの効果の種類を返す
+  int getItemType(){
+    return itemType;
   }
 }
