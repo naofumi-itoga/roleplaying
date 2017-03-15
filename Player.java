@@ -44,7 +44,7 @@ class Player {
     playerMaxHP = upStates[0]*10;
     playerMaxMP = upStates[1];
     playerAttack = upStates[2];
-    playerSkill[0] = new Skill(1.8, 2, "スラッシュ");
+    playerSkill[0] = new Skill(1.8, 2, ATTACKSKILL, "スラッシュ");
     playerItem[0] = new Item(-playerMaxHP/5, 1, HEALITEM, "薬草");
     playerAttribution = new Attribution();
     playerState = new StateEffect();
@@ -70,6 +70,9 @@ class Player {
       playerMP=0;
     }
   }
+  void setAttack(double x){
+    playerAttack *= x;
+  }
 //クラスに保存された情報を返すメソッド
   int getHP(){
     return playerHP;
@@ -80,6 +83,15 @@ class Player {
   int getAttack(){
     return playerAttack;
   }
+  //レベルを返す
+  int getLevel(){
+    return playerLevel;
+  }
+  //最大HPを返す
+  int getMaxHP(){
+    return playerMaxHP;
+  }
+
   //Skillクラスを読み取り消費MPを返す
   int getSkillCost(int x){
     return playerSkill[x].getSkillCost();
@@ -88,6 +100,26 @@ class Player {
   double getSkillBonus(int x){
     return playerSkill[x].getSkillBonus();
   }
+  void setSkill(double x, int y,int z, String s){
+    playerSkill[skillGoods] = new Skill(x, y, z, s);
+    skillGoods++;
+    if(skillGoods >= 100){
+      skillGoods=99;
+    }
+  }
+  //スキルの種類数を返す
+  int getSkillGoods(){
+    return skillGoods;
+  }
+  //スキルの名前を返す
+  String getSkillName(int x){
+    return playerSkill[x].getSkillName();
+  }
+  //スキルがどういう効果か返す
+  int getSkillType(int x){
+    return playerSkill[x].getSkillType();
+  }
+
   //Itemクラスを読み取りアイテムの所持数を返す
   int getItemCount(int x){
     return playerItem[x].getItemCount();
@@ -103,30 +135,6 @@ class Player {
   //アイテムの所持数を減らす
   int itemLost(int x){
     return playerItem[x].itemLost();
-  }
-  //属性を返す
-  int getAttribution(){
-    return playerAttribution.getAttribution();
-  }
-  //状態異常を設定する
-  void setStateEffect(int x){
-     playerState.setStateEffect(x);
-  }
-  //状態異常を確認しつつ一歩進める
-  boolean getStateEffect(){
-    return playerState.getStateEffect();
-  }
-  //状態異常を確認する
-  boolean checkStateEffect(){
-    return playerState.checkStateEffect();
-  }
-  //レベルを返す
-  int getLevel(){
-    return playerLevel;
-  }
-  //最大HPを返す
-  int getMaxHP(){
-    return playerMaxHP;
   }
   //アイテムの所持数を変える
   void countChange(int x, int i){
@@ -148,17 +156,21 @@ class Player {
   int getItemType(int x){
     return playerItem[x].getItemType();
   }
-  void setSkill(int x, int y, String s){
-    playerSkill[skillGoods] = new Skill(x, y, s);
-    skillGoods++;
-    if(skillGoods >= 100){
-      skillGoods=99;
-    }
+
+  //属性を返す
+  int getAttribution(){
+    return playerAttribution.getAttribution();
   }
-  int getSkillGoods(){
-    return skillGoods;
+  //状態異常を設定する
+  void setStateEffect(int x){
+     playerState.setStateEffect(x);
   }
-  String getSkillName(int x){
-    return playerSkill[x].getSkillName();
+  //状態異常を確認しつつ一歩進める
+  boolean getStateEffect(){
+    return playerState.getStateEffect();
+  }
+  //状態異常を確認する
+  boolean checkStateEffect(){
+    return playerState.checkStateEffect();
   }
 }

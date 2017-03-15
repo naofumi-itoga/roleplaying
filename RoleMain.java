@@ -47,7 +47,9 @@ class RoleMain {
     //Enemy enemy1 = new Enemy(CPHP, CPAT, CPE);//CPUのステータス作成
     //Enemy enemy1 = new Enemy((int)(Math.random()*ENEMYLEVELWIDTH)+LEVELLOWEST);//CPUのレベルで作成
     //Display display = new Display(player, enemy1);//コンソールの描画関係
-    player.setSkill(4,10,"ブルクラッシュ");
+    player.setSkill(8, 10, ATTACKSKILL, "ブルクラッシュ");
+    player.setSkill(-2, 3, HEALSKILL, "月光");
+    player.setSkill(1.1, 5, OTHERSKILL, "力溜");
     while(continuation){
       escapeSuccess=false;
       Enemy enemy1 = new Enemy((int)(Math.random()*ENEMYLEVELWIDTH)+LEVELLOWEST);//CPUのレベルで作成
@@ -137,13 +139,14 @@ class RoleMain {
 /*  public static int damageCalc(int at){
     int rand = (int)(Math.random()*40)+80;//80~12までの範囲の乱数
     return ((at*rand)/100);
-  }
+  }*/
   //スキルによるダメージ計算を行うメソッド
   public static int damageCalc(int at, double bt){
     int rand = (int)(Math.random()*40)+80;
     return (int)((at*bt*rand)/100);
   }
-  //敵の攻撃：相性
+  /*
+  //敵の攻撃
   public static int damageCalc(int at){
     int rand = (int)(Math.random()*40)+80;//80~12までの範囲の乱数
     return (int)((at*rand)/100);
@@ -187,13 +190,31 @@ class RoleMain {
         int re = Integer.parseInt(buf);
         if(re == YES){
           //MPが消費MPを上回っていたら行動できる
+
           if(player.getMP() >= player.getSkillCost(i)){
-            int damage;//ダメージ計算用変数
-            damage = damageCalc(player.getAttack(), player.getSkillBonus(i), player, enemy);//ダメージ計算
-            player.MPCalc(player.getSkillCost(i));
-            enemy.HPCalc(damage);
-            display.damageDisplay(damage,enemy);
-            return true;
+            switch(player.getSkillType(i)){
+              case (HEALSKILL):
+                int damage = damageCalc(player.getAttack(), player.getSkillBonus(i));//ダメージ計算
+                player.MPCalc(player.getSkillCost(i));
+                if(player.getHP()-damage >= player.getMaxHP()){
+                  damage = player.getHP()-player.getMaxHP();
+                }
+                player.HPCalc(damage);
+                display.damageDisplay(damage,player);
+                return true;
+              case (ATTACKSKILL):
+                damage = damageCalc(player.getAttack(), player.getSkillBonus(i), player, enemy);//ダメージ計算
+                player.MPCalc(player.getSkillCost(i));
+                enemy.HPCalc(damage);
+                display.damageDisplay(damage,enemy);
+                return true;
+              case (OTHERSKILL):
+                player.setAttack(player.getSkillBonus(i));
+                return true;
+              default:
+                System.out.println("効果はなかった");
+                return true;
+            }
           }else{
             System.out.println("MPが足りない");
           }
