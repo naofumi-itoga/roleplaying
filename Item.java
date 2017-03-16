@@ -3,9 +3,9 @@ class Item{
   private int itemEffect;//アイテムの効果量
   private int itemCount;//アイテムの数
   private String itemName;//アイテムの名前
-  public static final int HEALITEM = 0;//回復アイテム
-  public static final int ATTACKITEM = 1;//攻撃アイテム
-  public static final int OTHERITEM = 2;//その他アイテム
+  public static final int HEAL_ITEM = 0;//回復アイテム
+  public static final int ATTACK_ITEM = 1;//攻撃アイテム
+  public static final int OTHER_ITEM = 2;//その他アイテム
   private int itemType;//このアイテムの種類
 
   //Itemの情報を決定する
@@ -14,6 +14,14 @@ class Item{
      itemCount = y;
      itemName = s;
      itemType = z;
+  }
+  Item(int x, int z, String s){
+    itemEffect= x;
+    itemName = s;
+    itemType = z;
+  }
+  Item(Item i, int y){
+    itemCount = y;
   }
   //道具の所持数を変える
   void countChange(int x){

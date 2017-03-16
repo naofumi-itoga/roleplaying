@@ -4,13 +4,14 @@ class Attribution{
   private int WATER=1;
   private int WIND=2;
   private int attribution;
+  public static final int TOTAL_ATTRIBUTION = 3;
 
   //ƒ‰ƒ“ƒ_ƒ€‚É‘®«Œˆ’è
   Attribution(){
-    int rand = (int)(Math.random()*3);
-    if(rand==0){
+    int rand = (int)(Math.random()*TOTAL_ATTRIBUTION);
+    if(rand==FIRE){
       attribution = FIRE;
-    }else if(rand == 1){
+    }else if(rand == WATER){
       attribution = WATER;
     }else{
       attribution = WIND;

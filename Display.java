@@ -1,4 +1,7 @@
 class Display {
+  public static final int DOWN_HP = 0;//この数字以下になったら倒れる
+  public static final int MINUS = -1;//個の数を掛けて-にする
+
   Display(Player ps, Enemy es){
     System.out.printf("\033[2J");
     System.out.println("自分のLV:" + ps.getLevel());
@@ -9,7 +12,7 @@ class Display {
   }
   //HPとMPを表示するメソッド
   void statusDisplay(Player ps, Enemy es){
-    System.out.println("自分のLV:" + ps.getLevel());
+    System.out.println("\n自分のLV:" + ps.getLevel());
     System.out.println("自分のHP:" + ps.getHP());
     System.out.println("自分のMP:" + ps.getMP());
     System.out.println("敵のLV:" + es.getLevel());
@@ -28,7 +31,7 @@ class Display {
     if(d>=0){
       System.out.println(d + "のダメージを食らった");
     }else{
-      System.out.println((d*-1) + "の回復");
+      System.out.println((d*MINUS) + "の回復");
     }
   }
   //敵へのダメージを表示
@@ -36,7 +39,7 @@ class Display {
     if(d>=0){
       System.out.println("敵に" + d + "のダメージを与えた");
     }else{
-      System.out.println("敵は" + (d*-1) + "の回復");
+      System.out.println("敵は" + (d*MINUS) + "の回復");
     }
   }
   //行動選択の文章を表示する
@@ -45,9 +48,9 @@ class Display {
   }
   //戦闘結果
   void result(Player ps, Enemy es){
-    if(es.getHP()<=0){
+    if(es.getHP() <= DOWN_HP){
       System.out.println("戦闘に勝利した");
-    }else if(ps.getHP()<=0){
+    }else if(ps.getHP() <= DOWN_HP){
       System.out.println("戦闘に敗北した");
     }else {
       System.out.println("戦闘から逃げ出した");

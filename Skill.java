@@ -3,9 +3,9 @@ class Skill{
   private double skillBonus;//ƒXƒLƒ‹‚Ì”{—¦
   private int skillCost;//ƒXƒLƒ‹‚ÌƒRƒXƒg
   private String skillName;//ƒXƒLƒ‹‚Ì–¼‘O
-  public static final int HEALSKILL = 0;//‰ñ•œ“Á‹Z
-  public static final int ATTACKSKILL = 1;//UŒ‚“Á‹Z
-  public static final int OTHERSKILL = 2;//‚»‚Ì‘¼“Á‹Z
+  public static final int HEAL_SKILL = 0;//‰ñ•œ“Á‹Z
+  public static final int ATTACK_SKILL = 1;//UŒ‚“Á‹Z
+  public static final int OTHER_SKILL = 2;//‚»‚Ì‘¼“Á‹Z
   private int skillType;//‚±‚Ì“Á‹Z‚Ìí—Ş
 
   //“Á‹Z‚Ìî•ñ‚ğŒˆ’è‚·‚é

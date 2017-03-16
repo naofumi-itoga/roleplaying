@@ -11,21 +11,30 @@ class Player {
   private int playerLevel;//レベル
   private int playerMaxHP;//最大HP
   private int playerMaxMP;//最大MP
-  private int itemGoods = 1;//現在持っているアイテムの種類
-  private int skillGoods = 1;
-  public static final int HEALITEM = 0;//回復道具
-  public static final int ATTACKITEM = 1;//攻撃道具
-  public static final int OTHERITEM =2;//その他の道具
-  public static final int HEALSKILL = 0;//回復特技
-  public static final int ATTACKSKILL = 1;//攻撃特技
-  public static final int OTHERSKILL = 2;//その他特技
+  public static final int MAX_UP = 3;
+  public static final int HP_UP = 10;//ほかの能力に比べ、HPがどの程度上がりやすいか
+  private int itemGoods = 0;//現在持っているアイテムの種類
+  private int skillGoods = 0;
+  public static final int HEAL_ITEM = 0;//回復道具
+  public static final int ATTACK_ITEM = 1;//攻撃道具
+  public static final int OTHER_ITEM =2;//その他の道具
+  public static final int HEAL_HERB = 2;//薬草の回復量
+  public static final int HAVE_HERB = 1;//所持している薬草の数
+  public static final int HEAL_SKILL = 0;//回復特技
+  public static final int ATTACK_SKILL = 1;//攻撃特技
+  public static final int POWER_UP_SKILL = 2;//その他特技
+  public static final int MAX_ITEMGOODS = 100;//所持できる道具の最大数
+  public static final int MAX_SKILLGOODS = 100;//所持できるスキルの最大数
+  public static final int DOWN_HP = 0;
+  public static final int NO_MP = 0;
+
   //オブジェクトの初期データを決定する(直接決定)
   Player(int x,int y,int z){
     playerMaxHP = x;
     playerMaxMP = y;
     playerAttack = z;
     playerSkill[0] = new Skill(1.8, 2);
-    playerItem[0] = new Item(-playerHP/5, 1, HEALITEM, "薬草");
+    playerItem[0] = new Item(-playerMaxHP/HEAL_HERB, HAVE_HERB, HEAL_ITEM, "薬草");
     playerAttribution = new Attribution();
     playerState = new StateEffect();
     playerHP = playerMaxHP;
@@ -37,37 +46,37 @@ class Player {
     int upStates[]= new int[3];
     for(int i=0;i<playerLevel;i++){
       for(int j=0;j<upStates.length;j++){
-        int rnd = (int)(Math.random()*3);
+        int rnd = (int)(Math.random()*MAX_UP);
         upStates[j] += rnd;
       }
     }
-    playerMaxHP = upStates[0]*10;
+    playerMaxHP = upStates[0]*HP_UP;
     playerMaxMP = upStates[1];
     playerAttack = upStates[2];
-    playerSkill[0] = new Skill(1.8, 2, ATTACKSKILL, "スラッシュ");
-    playerItem[0] = new Item(-playerMaxHP/5, 1, HEALITEM, "薬草");
     playerAttribution = new Attribution();
     playerState = new StateEffect();
     playerHP = playerMaxHP;
     playerMP = playerMaxMP;
+    playerItem[0] = new Item(-playerMaxHP/HEAL_HERB, HAVE_HERB, HEAL_ITEM, "薬草");
+    itemGoods++;
   }
 //名前を決めるメソッド
-  void nameSet(String str){
+  void setName(String str){
     playerName=str;
     System.out.println(playerName);
   }
   //HPの計算を行うメソッド
   void HPCalc(int d){
     playerHP-=d;
-    if(playerHP<0){
-      playerHP=0;
+    if(playerHP<DOWN_HP){
+      playerHP=DOWN_HP;
     }
   }
   //MPを計算するメソッド
   void MPCalc(int d){
     playerMP-=d;
-    if(playerMP<0){
-      playerMP=0;
+    if(playerMP<NO_MP){
+      playerMP=NO_MP;
     }
   }
   void setAttack(double x){
@@ -103,8 +112,15 @@ class Player {
   void setSkill(double x, int y,int z, String s){
     playerSkill[skillGoods] = new Skill(x, y, z, s);
     skillGoods++;
-    if(skillGoods >= 100){
-      skillGoods=99;
+    if(skillGoods >= MAX_SKILLGOODS){
+      skillGoods = MAX_SKILLGOODS-1;
+    }
+  }
+  void setSkill(Skill s){
+    playerSkill[skillGoods] = s;
+    skillGoods++;
+    if(skillGoods >= MAX_SKILLGOODS){
+      skillGoods = MAX_SKILLGOODS-1;
     }
   }
   //スキルの種類数を返す
@@ -144,8 +160,22 @@ class Player {
   void setItem(int x, int y, int z, String s){
     playerItem[itemGoods] = new Item(x, y, z, s);
     itemGoods++;
-    if(itemGoods >= 100){
-      itemGoods=99;
+    if(itemGoods >= MAX_ITEMGOODS){
+      itemGoods = MAX_ITEMGOODS-1;
+    }
+  }
+  void setItem(Item i){
+    playerItem[itemGoods] = i;
+    itemGoods++;
+    if(itemGoods >= MAX_ITEMGOODS){
+      itemGoods = MAX_ITEMGOODS-1;
+    }
+  }
+  void setItem(Item i, int x){
+    playerItem[itemGoods] = i;
+    itemGoods++;
+    if(itemGoods >= MAX_ITEMGOODS){
+      itemGoods = MAX_ITEMGOODS;
     }
   }
   //所持しているアイテムの種類数を返す

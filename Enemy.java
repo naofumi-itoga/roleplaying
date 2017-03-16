@@ -8,9 +8,16 @@ class Enemy {
   private int enemyLevel;//敵のレベル
   private Item enemyUseItem;//敵の使用できるアイテム
   private int enemyMaxHP;//敵の最大HP
-  public static final int HEALITEM = 0;//敵の回復道具
-  public static final int ATTACKITEM = 1;//敵の攻撃道具
-  public static final int OTHERITEM = 2;//敵のその他の道具
+  public static final int HEAL_ITEM = 0;//敵の回復道具
+  public static final int ATTACK_ITEM = 1;//敵の攻撃道具
+  public static final int OTHER_ITEM = 2;//敵のその他の道具
+  public static final int HEAL_HERB = 5;//薬草の回復量
+  public static final int HAVE_HERB = 1;//敵が所持している薬草の数
+  public static final int MAX_UP = 3;//レベルアップ時の能力の最大上昇値
+  public static final int HP_UP = 10;//ほかの能力に比べ、HPがどの程度上がりやすいか
+  public static final int MAX_ESCAPE = 100;//最大の逃げることができる確率
+  public static final int ESCAPE_LINEAR = 2;//レベル＊これ＝逃げられない確率
+  public static final int DOWN_HP = 0;//倒れるHP
   //オブジェクトの初期データを決定する
   Enemy(int x, int y, int z){
     enemyMaxHP = x;
@@ -25,22 +32,22 @@ class Enemy {
     int upStates[]= new int[2];
     for(int i=0;i<enemyLevel;i++){
       for(int j=0;j<upStates.length;j++){
-        int rnd = (int)(Math.random()*3);
+        int rnd = (int)(Math.random()*MAX_UP);
         upStates[j] += rnd;
       }
     }
-    enemyMaxHP = upStates[0]*10;
+    enemyMaxHP = upStates[0]*HP_UP;
     enemyHP = enemyMaxHP;
     enemyAttack = upStates[1];
     enemyAttribution = new Attribution();
-    enemyUseItem = new Item(-enemyHP/5, 1, HEALITEM, "薬草");
-    escapeProbability = 60;
+    enemyUseItem = new Item(-enemyHP/HEAL_HERB, HAVE_HERB, HEAL_ITEM, "薬草");
+    escapeProbability = (MAX_ESCAPE-x*ESCAPE_LINEAR);
   }
   //CPUのHPを計算するメソッド
   void HPCalc(int d){
     enemyHP-=d;
-    if(enemyHP<0){
-      enemyHP=0;
+    if(enemyHP<DOWN_HP){
+      enemyHP=DOWN_HP;
     }
   }
   //CPUのステータスを返すメソッド

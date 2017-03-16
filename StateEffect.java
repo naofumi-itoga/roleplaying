@@ -10,7 +10,7 @@ class StateEffect{
   }
   //ó‘ÔˆÙí‚É‚©‚©‚Á‚½‚©
   void setStateEffect(int x){
-    if(x==1){
+    if(x==PARALYSIS){
       nowState = new Paralysis();
     }else {
       nowState = new NomalState();
