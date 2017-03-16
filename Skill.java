@@ -1,12 +1,15 @@
 //特技の情報を保存するメソッド
 class Skill{
-  private double skillBonus;//スキルの倍率
-  private int skillCost;//スキルのコスト
-  private String skillName;//スキルの名前
-  public static final int HEAL_SKILL = 0;//回復特技
-  public static final int ATTACK_SKILL = 1;//攻撃特技
-  public static final int OTHER_SKILL = 2;//その他特技
-  private int skillType;//この特技の種類
+  //定数
+  public static final int HEAL_SKILL = 0; //回復特技
+  public static final int ATTACK_SKILL = 1; //攻撃特技
+  public static final int OTHER_SKILL = 2; //その他特技
+  //変数
+  private double skillBonus; //スキルの倍率
+  private int skillCost; //スキルのコスト
+  private String skillName; //スキルの名前
+  private int skillType; //この特技の種類
+
 
   //特技の情報を決定する
   Skill(double x, int y){

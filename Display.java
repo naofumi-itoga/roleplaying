@@ -1,6 +1,5 @@
 class Display {
-  public static final int DOWN_HP = 0;//この数字以下になったら倒れる
-  public static final int MINUS = -1;//個の数を掛けて-にする
+  public static final int DOWN_HP = 0; //この数字以下になったら倒れる
 
   Display(Player ps, Enemy es){
     System.out.printf("\033[2J");
@@ -31,7 +30,7 @@ class Display {
     if(d>=0){
       System.out.println(d + "のダメージを食らった");
     }else{
-      System.out.println((d*MINUS) + "の回復");
+      System.out.println((d * -1) + "の回復");
     }
   }
   //敵へのダメージを表示
@@ -39,7 +38,7 @@ class Display {
     if(d>=0){
       System.out.println("敵に" + d + "のダメージを与えた");
     }else{
-      System.out.println("敵は" + (d*MINUS) + "の回復");
+      System.out.println("敵は" + (d * -1) + "の回復");
     }
   }
   //行動選択の文章を表示する

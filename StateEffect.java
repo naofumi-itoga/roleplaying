@@ -4,6 +4,7 @@ class StateEffect{
   private int PARALYSIS = 1;
   private int NOMAL = 0;
   State nowState;
+
   //’Êíó‘Ô‚Å‰Šú‰»‚·‚é
   StateEffect(){
     nowState = new NomalState();

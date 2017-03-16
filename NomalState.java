@@ -1,5 +1,5 @@
 class NomalState extends State{
-  private int time;//ó‘ÔˆÙí‚Å‚Í‚È‚¢ó‘Ô
+  private int time; //ó‘ÔˆÙí‚Å‚Í‚È‚¢ó‘Ô
   //’Êí
   NomalState(){
 

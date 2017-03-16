@@ -1,12 +1,14 @@
 //道具の情報を保存するメソッド
 class Item{
-  private int itemEffect;//アイテムの効果量
-  private int itemCount;//アイテムの数
-  private String itemName;//アイテムの名前
-  public static final int HEAL_ITEM = 0;//回復アイテム
-  public static final int ATTACK_ITEM = 1;//攻撃アイテム
-  public static final int OTHER_ITEM = 2;//その他アイテム
-  private int itemType;//このアイテムの種類
+  //定数
+  public static final int HEAL_ITEM = 0; //回復アイテム
+  public static final int ATTACK_ITEM = 1; //攻撃アイテム
+  public static final int OTHER_ITEM = 2; //その他アイテム
+  //変数
+  private int itemEffect; //アイテムの効果量
+  private int itemCount; //アイテムの数
+  private String itemName; //アイテムの名前
+  private int itemType; //このアイテムの種類
 
   //Itemの情報を決定する
   Item(int x, int y, int z, String s){

@@ -1,8 +1,12 @@
 class Paralysis extends State{
-  private int time=-1;//麻痺で動けないターン数
-  public static final int NO_EFFECT  = 0;
-  public static final int MAX_EFFECT = 3;
-  public static final int MIN_EFFECT = 1;
+  //定数
+  public static final int NO_EFFECT  = 0; //麻痺にかかっていない
+  public static final int MAX_EFFECT = 3; //麻痺にかかった場合に動けない最大ターン
+  public static final int MIN_EFFECT = 1; //麻痺にかかった時に動けない最少ターン
+
+  //変数
+  private int time=NO_EFFECT;//麻痺で動けないターン数
+
   //何ターン行動できないかを決める
   Paralysis(){
     if(time<=NO_EFFECT){
