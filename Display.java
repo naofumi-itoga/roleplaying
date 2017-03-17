@@ -55,6 +55,45 @@ class Display {
       System.out.println("戦闘から逃げ出した");
     }
   }
+
+
+  public static final int ESC = 0x1B;
+  public Display(Player ps, Enemy es, int i){
+    System.out.printf("\033[2J");
+    System.out.printf("%c[0;0H", ESC);
+    System.out.printf("%c[>5h", ESC);   /* カーソル消去 */
+    System.out.println("自分のLV:" + ps.getLevel());
+    System.out.println("自分のHP:" + ps.getHP());
+    System.out.println("自分のMP:" + ps.getMP());
+    System.out.println("敵のLV:" + es.getLevel());
+    System.out.println("敵のHP:" + es.getHP());
+  }
+  void statusDisplay(Player ps, Enemy es, int i){
+    System.out.printf("%c[0;0H", ESC);
+    System.out.println("\n自分のLV:" + ps.getLevel());
+    System.out.println("自分のHP:" + ps.getHP());
+    System.out.println("自分のMP:" + ps.getMP());
+    System.out.println("敵のLV:" + es.getLevel());
+    System.out.println("敵のHP:" + es.getHP());
+    System.out.printf("%c[0;5H", ESC);
+    System.out.printf("%c[>5h", ESC);   /* カーソル消去 */
+  }
+  void choiseAction(int i){
+    System.out.println("行動を選択してください。\n1.攻撃 2.特技 3.道具 4.逃走");
+    System.out.printf("%c[>5h", ESC);   /* カーソル消去 */
+  }
+  String logs;
+  void setLog(String s){
+    logs += s + "\n";
+  }
+  void getLog(){
+  //  System.out.printf("%c[20C", ESC);
+    //System.out.printf("%c[5A", ESC);
+    //System.out.print(s);
+    System.out.print("あｓｄじょｈふぁｓｆ");
+//    System.out.printf("%c[0;0H", ESC);
+    System.out.printf("%c[>5h", ESC);   /* カーソル消去 */
+  }
     /*
     private int count;//行数のカウント
     void choiseAction(int a){

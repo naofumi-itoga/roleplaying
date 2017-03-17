@@ -80,7 +80,8 @@ class RoleMain {
     while(continuation){
       escapeSuccess = false; //逃走失敗状態
       Enemy enemy1 = new Enemy((int)(Math.random() * ENEMY_LEVEL_WIDTH) + ENEMY_LEVEL_LOWEST); //CPUのレベルで作成
-      Display display = new Display(player, enemy1); //コンソールの描画関係
+      //Display display = new Display(player, enemy1); //コンソールの描画関係
+      Display display = new Display(player, enemy1, 1 ); //コンソールの描画関係
       //プレイヤーと敵、両方のHPが残っていて、逃走に成功していない場合繰り返す
       while(enemy1.getHP() > DOWN_HP && !escapeSuccess && player.getHP() > DOWN_HP){
         actionFlag = false;
@@ -88,7 +89,9 @@ class RoleMain {
           actionFlag = true;
         }
         while(!actionFlag){ //行動を行うまで繰り返し
-          display.choiseAction(); //行動選択の表示
+          //display.choiseAction(); //行動選択の表示
+          display.getLog();
+          display.choiseAction(1); //行動選択の表示
           try{
             InputStreamReader is = new InputStreamReader(System.in);
             BufferedReader br = new BufferedReader(is);
@@ -325,22 +328,22 @@ class RoleMain {
   //相手の行動
   public static void enemyTurn(Player player, Enemy enemy, Display display){
     //薬草を使用できるかどうか
-    if(enemy.getHP() <= enemy.getMaxHP()/PINCH_HP && enemy.itemLost() >= NO_ITEM){
+    if(enemy.getHP() <= enemy.getMaxHP() / PINCH_HP && enemy.itemLost() >= NO_ITEM){
       int damage = enemy.getItemEffect(); //ダメージ計算用変数
       enemy.itemLost();
       if(enemy.getHP() - damage >= enemy.getMaxHP()){
-        damage = enemy.getHP()-enemy.getMaxHP();
+        damage = enemy.getHP() - enemy.getMaxHP();
       }
       enemy.HPCalc(damage);
-      display.damageDisplay(damage,enemy);
+      display.damageDisplay(damage, enemy);
     }else{
       //薬草を使用しなかった場合確率で麻痺攻撃or通常攻撃
-      int rand = (int)(Math.random()*HUNDRED_PERCENT);
+      int rand = (int)(Math.random() * HUNDRED_PERCENT);
       if(rand >= PARALYSIS_ATTACK_PROBABILITY){
         int damage; //ダメージ計算用変数
         damage = damageCalc(enemy.getAttack(), enemy, player); //ダメージ計算
         player.HPCalc(damage);
-        display.damageDisplay(damage,player);
+        display.damageDisplay(damage, player);
       }else{
         if(!player.checkStateEffect()){
           player.setStateEffect(PARALYSIS);
