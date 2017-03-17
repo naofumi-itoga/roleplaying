@@ -80,8 +80,8 @@ class RoleMain {
     while(continuation){
       escapeSuccess = false; //逃走失敗状態
       Enemy enemy1 = new Enemy((int)(Math.random() * ENEMY_LEVEL_WIDTH) + ENEMY_LEVEL_LOWEST); //CPUのレベルで作成
-      //Display display = new Display(player, enemy1); //コンソールの描画関係
-      Display display = new Display(player, enemy1, 1 ); //コンソールの描画関係
+      Display display = new Display(player, enemy1); //コンソールの描画関係
+      //Display display = new Display(player, enemy1, 1 ); //コンソールの描画関係
       //プレイヤーと敵、両方のHPが残っていて、逃走に成功していない場合繰り返す
       while(enemy1.getHP() > DOWN_HP && !escapeSuccess && player.getHP() > DOWN_HP){
         actionFlag = false;
@@ -89,9 +89,9 @@ class RoleMain {
           actionFlag = true;
         }
         while(!actionFlag){ //行動を行うまで繰り返し
-          //display.choiseAction(); //行動選択の表示
-          display.getLog();
-          display.choiseAction(1); //行動選択の表示
+          display.choiseAction(); //行動選択の表示
+  //        display.getLog();
+//          display.choiseAction(1); //行動選択の表示
           try{
             InputStreamReader is = new InputStreamReader(System.in);
             BufferedReader br = new BufferedReader(is);
