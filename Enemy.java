@@ -46,6 +46,9 @@ class Enemy {
     useItem = new Item(-HP/HEAL_HERB, HAVE_HERB, HEAL_ITEM, "薬草");
     escapeProbability = (MAX_ESCAPE-x*ESCAPE_LINEAR);
   }
+  void setName(String str){
+    name = str;
+  }
   //CPUのHPを計算するメソッド
   void HPCalc(int d){
     HP-=d;
@@ -75,6 +78,9 @@ class Enemy {
   //さいだいHPを返す
   int getMaxHP(){
     return maxHP;
+  }
+  String getName(){
+    return name;
   }
   int getItemCount(){
     return useItem.getItemCount();

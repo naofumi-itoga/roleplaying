@@ -67,7 +67,6 @@ class Player {
 //名前を決めるメソッド
   void setName(String str){
     name=str;
-    System.out.println(name);
   }
   //HPの計算を行うメソッド
   void HPCalc(int d){
@@ -103,6 +102,12 @@ class Player {
   //最大HPを返す
   int getMaxHP(){
     return maxHP;
+  }
+  int getMaxMP(){
+    return maxMP;
+  }
+  String getName(){
+    return name;
   }
 
   //Skillクラスを読み取り消費MPを返す

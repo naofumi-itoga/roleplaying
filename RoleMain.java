@@ -45,6 +45,7 @@ class RoleMain {
   public static final int MAX_SKILLGOODS = 100; //所持できるスキルの最大数
 
   //変数
+  public static int count; //ターン数
   public static Item allItem[] = new Item[MAX_ITEM_GOODS-1]; //すべてのアイテム
   public static Skill allSkill[] = new Skill[MAX_SKILLGOODS-1]; //すべての特技
 
@@ -70,28 +71,45 @@ class RoleMain {
     player.setSkill(8, 10, ATTACK_SKILL, "ブルクラッシュ");
     player.setSkill(-2, 3, HEAL_SKILL, "月光");
     player.setSkill(1.3, 5, POWER_UP_SKILL, "力溜");*/
-    //プレイヤーの使用できるものとしてセット
+    //プレイヤーの使用できるものとして、特技と道具セット
     player.setItem(allItem[0]);
     player.setSkill(allSkill[0]);
     player.setSkill(allSkill[1]);
     player.setSkill(allSkill[2]);
     player.setSkill(allSkill[3]);
     //プレイヤーのHPが０になるか、続けることをやめるまでループ
+    //名前入力
+
+    String nameBuf = null;
+    do{
+      System.out.println("四文字以下でプレイヤーの名前を入力してください");
+      try{
+        InputStreamReader is = new InputStreamReader(System.in);
+        BufferedReader br = new BufferedReader(is);
+        nameBuf = br.readLine(); //入力された文字を受け取る
+        player.setName(nameBuf);
+      }catch(Exception e){
+      }
+    }while(nameBuf.length() > 4 || nameBuf.isEmpty());
+
     while(continuation){
       escapeSuccess = false; //逃走失敗状態
       Enemy enemy1 = new Enemy((int)(Math.random() * ENEMY_LEVEL_WIDTH) + ENEMY_LEVEL_LOWEST); //CPUのレベルで作成
+      enemy1.setName("オオカミ");
+      //Display display = new Display(player, enemy1); //コンソールの描画関係
       Display display = new Display(player, enemy1); //コンソールの描画関係
-      //Display display = new Display(player, enemy1, 1 ); //コンソールの描画関係
       //プレイヤーと敵、両方のHPが残っていて、逃走に成功していない場合繰り返す
       while(enemy1.getHP() > DOWN_HP && !escapeSuccess && player.getHP() > DOWN_HP){
+    //    count++;
+
+        //display.setLog(count + "ターン目");
         actionFlag = false;
         if(beforeAttackEffect(player)){
           actionFlag = true;
         }
         while(!actionFlag){ //行動を行うまで繰り返し
-          display.choiseAction(); //行動選択の表示
-  //        display.getLog();
-//          display.choiseAction(1); //行動選択の表示
+          //display.choiseAction(); //行動選択の表示
+
           try{
             InputStreamReader is = new InputStreamReader(System.in);
             BufferedReader br = new BufferedReader(is);
@@ -139,7 +157,10 @@ class RoleMain {
         if(enemy1.getHP() > DOWN_HP && !escapeSuccess){
           enemyTurn(player, enemy1, display); //敵の行動の処理へ
         }
+
         display.statusDisplay(player, enemy1); //敵のHPの表示
+        display.choiseAction(); //行動選択の表示
+        display.setLog("_____________");
       }
       display.result(player, enemy1); //戦闘結果の表示
       gainItem(player, enemy1); //アイテムを獲得
@@ -206,7 +227,8 @@ class RoleMain {
     int damage;//ダメージ計算用変数
     damage = damageCalc(player.getAttack(), player, enemy); //ダメージ計算
     enemy.HPCalc(damage);
-    display.damageDisplay(damage, enemy);
+    display.setCenterLog(damage);
+    display.setLog(display.damageDisplay(damage, enemy));
     return true;
   }
 
@@ -233,14 +255,16 @@ class RoleMain {
                   damage = player.getHP() - player.getMaxHP();
                 }
                 player.HPCalc(damage);
-                display.damageDisplay(damage, player);
+                display.setCenterLog(damage);
+                display.setLog(display.damageDisplay(damage, player));
                 return true;
                 //敵にダメージ
               case (ATTACK_SKILL):
                 damage = damageCalc(player.getAttack(), player.getSkillBonus(i), player, enemy); //ダメージ計算
                 player.MPCalc(player.getSkillCost(i));
                 enemy.HPCalc(damage);
-                display.damageDisplay(damage, enemy);
+                display.setCenterLog(damage);
+                display.setLog(display.damageDisplay(damage, enemy));
                 return true;
                 //攻撃力アップ
               case (POWER_UP_SKILL):
@@ -286,13 +310,13 @@ class RoleMain {
                     damage = player.getHP() - player.getMaxHP();
                   }
                   player.HPCalc(damage);
-                  display.damageDisplay(damage,player);
+                  display.setLog(display.damageDisplay(damage,player));
                   return true;
                   //攻撃アイテム
                 case (ATTACK_ITEM):
                   damage=player.getItemEffect(i); //ダメージ計算用変数
                   enemy.HPCalc(damage);
-                  display.damageDisplay(damage, enemy);
+                  display.setLog(display.damageDisplay(damage, enemy));
                   return true;
                 default:
                   System.out.println("効果はなかった");
@@ -335,7 +359,7 @@ class RoleMain {
         damage = enemy.getHP() - enemy.getMaxHP();
       }
       enemy.HPCalc(damage);
-      display.damageDisplay(damage, enemy);
+      display.setLog(display.damageDisplay(damage, enemy));
     }else{
       //薬草を使用しなかった場合確率で麻痺攻撃or通常攻撃
       int rand = (int)(Math.random() * HUNDRED_PERCENT);
@@ -343,13 +367,13 @@ class RoleMain {
         int damage; //ダメージ計算用変数
         damage = damageCalc(enemy.getAttack(), enemy, player); //ダメージ計算
         player.HPCalc(damage);
-        display.damageDisplay(damage, player);
+        display.setLog(display.damageDisplay(damage, player));
       }else{
         if(!player.checkStateEffect()){
           player.setStateEffect(PARALYSIS);
-          System.out.println("麻痺攻撃を食らった");
+          display.setLog("麻痺攻撃を食らった");
         }else{
-          System.out.println("すでに麻痺していたため麻痺攻撃を食らわなかった");
+          display.setLog("麻痺攻撃は外れた");
         }
       }
     }
