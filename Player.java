@@ -15,6 +15,7 @@ class Player {
   public static final int MAX_SKILLGOODS = 100; //所持できるスキルの最大数
   public static final int DOWN_HP = 0; //この数値以下になったら倒れる
   public static final int NO_MP = 0; //MPをこの数値以下にできない
+  public static final int MAX_EXPERIENCE_POINT = 100;
   //変数
   private String name; //プレイヤーの名前
   private int HP; //プレイヤーの現在のHP
@@ -25,6 +26,7 @@ class Player {
   private int maxMP; //最大MP
   private int itemGoods = 0; //現在持っているアイテムの種類
   private int skillGoods = 0; //現在所持しているスキルの数
+  private int experiencePoint;
   private Attribution attribution; //属性
   private StateEffect state; //今の状態異常
   private Skill skill[] = new Skill[99]; //持っているスキル
@@ -211,5 +213,24 @@ class Player {
   //状態異常を確認する
   boolean checkStateEffect(){
     return state.checkStateEffect();
+  }
+  //
+  void levelUp(int ex){
+    experiencePoint += ex;
+    int upStates[] = new int[3];
+    while(experiencePoint >= MAX_EXPERIENCE_POINT){
+      level++;
+      System.out.println("レベルアップ！！");
+      for(int j=0;j<upStates.length;j++){
+        int rnd = (int)(Math.random()*MAX_UP);
+        upStates[j] += rnd;
+      }
+      experiencePoint -= MAX_EXPERIENCE_POINT;
+    }
+    maxHP += upStates[0]*HP_UP;
+    maxMP += upStates[1];
+    attack += upStates[2];
+    HP += upStates[0]*HP_UP;
+    MP += upStates[1];
   }
 }

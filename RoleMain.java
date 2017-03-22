@@ -39,6 +39,7 @@ class RoleMain {
   public static final int ATTACK_SKILL = 1; //攻撃特技
   public static final int POWER_UP_SKILL = 2; //強化特技
   public static final int GET_HERB = 50; //薬草を獲得する確率
+  public static final int MIN_HEAL = -50; //最低回復量
   public static final int MAX_ITEM_GOODS = 100; //所持できる道具の最大数
   public static final int MAX_GET_ITEM = 10; //一度に獲得できるアイテムの最大数
   public static final int MIN_GET_ITEM = 1; //一度に獲得できるアイテムの最低数
@@ -52,7 +53,7 @@ class RoleMain {
   //Main、流れの制御をおこなう
   public static void main(String args[]){
     //出てくる特技、アイテムの設定
-    allItem[0] = new Item((int)(Math.random() * -HUNDRED_PERCENT), (int)(Math.random() * MAX_GET_ITEM)+MIN_GET_ITEM, HEAL_ITEM, "薬草");
+    allItem[0] = new Item((int)(Math.random() * -HUNDRED_PERCENT)+MIN_HEAL, (int)(Math.random() * MAX_GET_ITEM)+MIN_GET_ITEM, HEAL_ITEM, "薬草");
     allItem[1] = new Item((int)(Math.random() * HUNDRED_PERCENT), (int)(Math.random() * MAX_GET_ITEM)+MIN_GET_ITEM, ATTACK_ITEM, "石");
     allSkill[0] = new Skill(1.8, 2, ATTACK_SKILL, "スラッシュ");
     allSkill[1] = new Skill(8, 10, ATTACK_SKILL, "ブルクラッシュ");
@@ -166,6 +167,7 @@ class RoleMain {
       gainItem(player, enemy1); //アイテムを獲得
       //プレイヤーのHPがある場合選択肢が出る
       if(player.getHP() > DOWN_HP){
+        player.levelUp(enemy1.getExperience());
         System.out.println("次へ進みますか？1:YES, 2:NO");
         try{
           InputStreamReader is = new InputStreamReader(System.in);
@@ -414,7 +416,7 @@ class RoleMain {
     if(enemy.getHP() <= DOWN_HP){
       //５０％の確率で薬草、それ以外の場合は石
       if((int)(Math.random() * HUNDRED_PERCENT) >= GET_HERB){
-        player.setItem((int)(Math.random() * -HUNDRED_PERCENT), (int)(Math.random() * MAX_GET_ITEM)+MIN_GET_ITEM, HEAL_ITEM, "薬草");
+        player.setItem((int)(Math.random() * -HUNDRED_PERCENT)+MIN_HEAL, (int)(Math.random() * MAX_GET_ITEM)+MIN_GET_ITEM, HEAL_ITEM, "薬草");
       }else{
         player.setItem((int)(Math.random()*HUNDRED_PERCENT), (int)(Math.random() * MAX_GET_ITEM)+MIN_GET_ITEM, HEAL_ITEM, "石");
       }

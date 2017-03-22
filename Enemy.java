@@ -18,6 +18,7 @@ class Enemy {
   private int escapeProbability; //敵から逃げられる確率
   private int level; //敵のレベル
   private int maxHP; //敵の最大HP
+  private int experiencePoint;
   private Attribution attribution; //敵の属性
   private Item useItem; //敵の使用できるアイテム
 
@@ -45,6 +46,7 @@ class Enemy {
     attribution = new Attribution();
     useItem = new Item(-HP/HEAL_HERB, HAVE_HERB, HEAL_ITEM, "薬草");
     escapeProbability = (MAX_ESCAPE-x*ESCAPE_LINEAR);
+    experiencePoint = x*2;
   }
   void setName(String str){
     name = str;
@@ -96,5 +98,9 @@ class Enemy {
   //アイテムの所持数を減らす
   int itemLost(){
     return useItem.itemLost();
+  }
+  //
+  int getExperience(){
+    return experiencePoint;
   }
 }
