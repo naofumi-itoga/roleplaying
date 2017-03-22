@@ -42,9 +42,8 @@ class Item{
     return itemName;
   }
   //“¹‹ï‚ÌŒË”‚ğŒ¸‚ç‚·
-  int itemLost(){
+  void itemLost(){
     itemCount--;
-    return itemCount;
   }
   //ƒAƒCƒeƒ€‚ğ’Ç‰Á‚·‚é
   void setItem(int x, int y, int z, String s){

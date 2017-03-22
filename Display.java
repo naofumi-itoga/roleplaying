@@ -10,8 +10,11 @@ class Display {
   public static final String CENTER_LOG_CHANGE = "\033[1;31m";//太字にして文字を赤く
   public static final String COLOR_DEFAULT = "\033[m";//色を初期に戻す
   public static final String WINDOW_SIZE = "\033[4;170;370t";//コンソールのサイズを170pixel,370pixcel
-  public static final int ESC = 0x1B;//ＥＳＣキー
-  public static final int ALL_EM = 8;
+  public static final String UNDER_SCORE = "\033[4m";
+  public static final String UNDER_SCORE_RELEASE = "\033[24m";
+  public static final int ESC = 0x1B; //ＥＳＣキー
+  public static final int ALL_EM = 8; //すべてが大文字の場合のバイト数
+  public static final int NO_ITEM = 0;
   //変数
     String logs[] = new String[8];
 
@@ -37,7 +40,7 @@ class Display {
   //  System.out.printf("%c[1;1H", ESC); //カーソルを上へ
     System.out.printf(CLEAR);
     System.out.println("------------------------");
-    System.out.println(es.getName() + "\t\t|8." + BACK_COLOR_BLUE + logs[7] + BACK_COLOR_BASE);
+    System.out.println(es.getName() + "\t\t|8." + logs[7]);
     System.out.print("LV:" + es.getLevel() + "\t");
   //  System.out.println("HP:" + es.getHP() + "\t|7." + logs[6]);//数字によるHP表示(敵)
   //バーでHP表示(敵)
@@ -105,6 +108,9 @@ class Display {
     System.out.println("1.攻撃 2.特技\t\t|2." + logs[1]);
     System.out.println("3.道具 4.逃走\t\t|1." + logs[0]);
     System.out.println("======================== ");
+    if(centerLog != null){
+      System.out.println(centerLog);
+    }
   }
 
 
@@ -158,14 +164,36 @@ class Display {
   }
 
   //中央にダメージ表示する用
-  String centerLog =  "1234567789";
+  String centerLog ;
   void setCenterLog(int i){
     if(i>=0){
       centerLog = CENTER_LOG_CHANGE + i + "ダメージ" + BOLD_DEFAULT + COLOR_DEFAULT;
     }else{
       centerLog = -1*i + "回復";
     }
+  }
+  void setCenterLog(String str){
+      centerLog = str;
+  }
 
+  //スキルを表示する
+  void skillDisplay(Player player){
+    System.out.printf(CLEAR + UNDER_SCORE + BACK_COLOR_BLUE);
+    for(int i = 0; i < player.getSkillGoods(); i++){
+      System.out.println(i+1 + "." + player.getSkillName(i) + ":消費MP" + player.getSkillCost(i));
+    }
+    System.out.println("0.もどる" + UNDER_SCORE_RELEASE + BACK_COLOR_BASE);
+  }
+
+  //道具を表示する
+  void itemDisplay(Player player){
+    System.out.printf(CLEAR + UNDER_SCORE + BACK_COLOR_BLUE);
+    for(int i = 0; i < player.getItemGoods(); i++){
+      if(player.getItemCount(i) > NO_ITEM){
+        System.out.println(i+1 + "." + player.getItemName(i) + ":所持数" + player.getItemCount(i));
+      }
+    }
+    System.out.println("0.もどる" + UNDER_SCORE_RELEASE + BACK_COLOR_BASE);
   }
     /*
     private int count;//行数のカウント

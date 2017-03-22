@@ -11,11 +11,12 @@ class Player {
   public static final int HEAL_SKILL = 0; //回復特技
   public static final int ATTACK_SKILL = 1; //攻撃特技
   public static final int POWER_UP_SKILL = 2; //その他特技
-  public static final int MAX_ITEMGOODS = 100; //所持できる道具の最大数
-  public static final int MAX_SKILLGOODS = 100; //所持できるスキルの最大数
+  public static final int MAX_ITEMGOODS = 10; //所持できる道具の最大数
+  public static final int MAX_SKILLGOODS = 10; //所持できるスキルの最大数
   public static final int DOWN_HP = 0; //この数値以下になったら倒れる
   public static final int NO_MP = 0; //MPをこの数値以下にできない
   public static final int MAX_EXPERIENCE_POINT = 100;
+  public static final int NO_ITEM = 0;
   //変数
   private String name; //プレイヤーの名前
   private int HP; //プレイヤーの現在のHP
@@ -29,8 +30,8 @@ class Player {
   private int experiencePoint;
   private Attribution attribution; //属性
   private StateEffect state; //今の状態異常
-  private Skill skill[] = new Skill[99]; //持っているスキル
-  private Item item[] = new Item[99]; //持っているアイテム
+  private Skill skill[] = new Skill[MAX_SKILLGOODS-1]; //持っているスキル
+  private Item item[] = new Item[MAX_ITEMGOODS-1]; //持っているアイテム
 
 
 
@@ -160,8 +161,8 @@ class Player {
     return item[x].getItemName();
   }
   //アイテムの所持数を減らす
-  int itemLost(int x){
-    return item[x].itemLost();
+  void itemLost(int x){
+    item[x].itemLost();
   }
   //アイテムの所持数を変える
   void countChange(int x, int i){
@@ -169,10 +170,21 @@ class Player {
   }
   //アイテムを追加する
   void setItem(int x, int y, int z, String s){
-    item[itemGoods] = new Item(x, y, z, s);
-    itemGoods++;
-    if(itemGoods >= MAX_ITEMGOODS){
-      itemGoods = MAX_ITEMGOODS-1;
+    if(itemGoods >= MAX_ITEMGOODS-1){
+      for(int i = 0; i < itemGoods; i++){
+        if(item[i].getItemCount() == NO_ITEM){
+          item[i] =new Item(x, y, z, "iremono");
+          System.out.println(getItemName(i) + "を" + getItemCount(i) + "個手に入れた");
+          break;
+        }
+        if(i == itemGoods-1){
+          System.out.println("アイテムは持ち切れなかった");
+        }
+      }
+    }else{
+      item[itemGoods] = new Item(x, y, z, s);
+      System.out.println(getItemName(itemGoods) + "を" + getItemCount(itemGoods) + "個手に入れた");
+      itemGoods++;
     }
   }
   void setItem(Item i){
@@ -214,7 +226,7 @@ class Player {
   boolean checkStateEffect(){
     return state.checkStateEffect();
   }
-  //
+  //レベルが上がるか
   void levelUp(int ex){
     experiencePoint += ex;
     int upStates[] = new int[3];

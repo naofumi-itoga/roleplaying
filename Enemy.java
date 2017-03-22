@@ -96,10 +96,10 @@ class Enemy {
     return useItem.getItemName();
   }
   //アイテムの所持数を減らす
-  int itemLost(){
-    return useItem.itemLost();
+  void itemLost(){
+    useItem.itemLost();
   }
-  //
+  //その敵に設定された経験値を返す
   int getExperience(){
     return experiencePoint;
   }
