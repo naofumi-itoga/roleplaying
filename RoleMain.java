@@ -21,6 +21,7 @@ class RoleMain {
   public static final int PARALYSIS = 1; //麻痺を付与
   public static final int PARALYSIS_ATTACK_PROBABILITY = 20; //麻痺攻撃を行う確率
   public static final int YES = 1; //特技と道具で使用すると回答
+  public static final int NO = 2; //特技や道具などの二択でＮＯ
   public static final int HUNDRED_PERCENT = 100; //１００、％とかで使う
   public static final int NO_ITEM = 0; //これ以下なら道具が使用できない
   public static final int DOWN_HP = 0; //この数字以下になったら倒れる
@@ -44,6 +45,14 @@ class RoleMain {
   public static final int MAX_GET_ITEM = 10; //一度に獲得できるアイテムの最大数
   public static final int MIN_GET_ITEM = 1; //一度に獲得できるアイテムの最低数
   public static final int MAX_SKILLGOODS = 100; //所持できるスキルの最大数
+  public static final boolean LOOP = true; //whileをループさせる
+  public static final String RIGHT_CHARACTER = "正しく入力してください"; //正しい入力が行われなかった時に表示
+  public static final String RIGHT_NUMBER = "数字を入力してください"; //正しい数字の入力が行われなかったときに表示
+  public static final int RETURN = 0; //特技や道具で戻るを選択
+  public static final int INN = 1; //宿を選択
+  public static final int CURIO_SHOP = 2; //道具屋を選択
+  public static final int DUNGEON = 3; //ダンジョンを選択
+  public static final int END = 4; //終了を選択
 
   //変数
   public static int count; //ターン数
@@ -137,7 +146,7 @@ class RoleMain {
                   enableInput = true;
                   break;
                 default:
-                  display.setCenterLog("1~4の中から選択してください");
+                  display.setCenterLog(RIGHT_CHARACTER);
                 }
             /*if(re == ATTACK_COMMAND){
               //通常攻撃の処理
@@ -156,7 +165,7 @@ class RoleMain {
               System.out.println("1~4の中から選択してください");
             }*/
             }catch(Exception e){
-              display.setCenterLog("数字を入力してください");
+              display.setCenterLog(RIGHT_NUMBER);
               enableInput = false;
             }
         }
@@ -165,8 +174,6 @@ class RoleMain {
           enemyTurn(player, enemy1, display); //敵の行動の処理へ
         }
 
-        //display.statusDisplay(player, enemy1); //敵のHPの表示
-        //display.choiseAction(); //行動選択の表示
         display.setLog("_____________");
       }
       display.statusDisplay(player, enemy1); //敵のHPの表示
@@ -177,18 +184,26 @@ class RoleMain {
         player.levelUp(enemy1.getExperience());
         gainItem(player, enemy1); //アイテムを獲得
         System.out.println("次へ進みますか？1:YES, 2:NO");
-        try{
-          InputStreamReader is = new InputStreamReader(System.in);
-          BufferedReader br = new BufferedReader(is);
-          String buf = br.readLine(); //入力された文字を受け取る
-          int re = Integer.parseInt(buf);
-          if(re == YES){
-            continuation = true;
-          }else{
-            continuation = false;
+        //正しい入力がなされるまで繰り返す
+        while(LOOP){
+          try{
+            InputStreamReader is = new InputStreamReader(System.in);
+            BufferedReader br = new BufferedReader(is);
+            String buf = br.readLine(); //入力された文字を受け取る
+            int re = Integer.parseInt(buf);
+            if(re == YES){
+              continuation = true;
+              break;
+            }else if(re == NO){
+              display.clearDisplay();
+              continuation = town(player, display);
+              break;
+            }else{
+              System.out.println(RIGHT_CHARACTER);
+            }
+          }catch(Exception e){
+            System.out.println(RIGHT_NUMBER);
           }
-        }catch(Exception e){
-          System.out.println("数字を入力してください");
         }
       }else{
         continuation = false;
@@ -298,28 +313,25 @@ class RoleMain {
   }*/
   //特技を選択した場合の処理(一覧表示式)
   public static boolean skillAttack(Player player, Enemy enemy, Display display){
-    //プレイヤーが所持しているスキルの数だけ繰り返す
-    boolean enableInput = false;
     display.skillDisplay(player);
-    while(!enableInput){
+    while(LOOP){
       try{
         InputStreamReader is = new InputStreamReader(System.in);
         BufferedReader br = new BufferedReader(is);
         String buf = br.readLine(); //入力された文字を受け取る
         int re = Integer.parseInt(buf);
-        if(re == 0){
+        if(re == RETURN){
           return false;
         }else if(re <= player.getSkillGoods()){
-          enableInput = true;
           return skillResult(player, display, enemy, re-1);
         }
-        System.out.println("選択肢に存在している数字を入力してください");
+        System.out.println(RIGHT_CHARACTER);
       }catch(Exception e){
-        System.out.println("数字を入力してください");
+        System.out.println(RIGHT_NUMBER);
 
       }
     }
-    return false;
+    //return false;
   }
   //スキルの効果判定(一覧表示の場合)
   public static boolean skillResult(Player player, Display display, Enemy enemy, int i){
@@ -420,32 +432,30 @@ class RoleMain {
   }*/
   //道具使用（一覧表示）
   public static boolean itemUse(Player player, Enemy enemy, Display display){
-    boolean enableInput = false;
     display.itemDisplay(player);
-    while(!enableInput){
+    while(LOOP){
       try{
         InputStreamReader is = new InputStreamReader(System.in);
         BufferedReader br = new BufferedReader(is);
         String buf = br.readLine(); //入力された文字を受け取る
         int re = Integer.parseInt(buf);
-        if(re == 0){
+        if(re == RETURN){
           return false;
-        }else if(re <= player.getSkillGoods()){
-          enableInput = true;
-          return itemResult(player, display, enemy, re-1);
+        }else if(re <= player.getItemGoods()){
+          return itemResult(player, display, enemy, re - 1);
+        }else{
+          System.out.println(RIGHT_CHARACTER);
         }
-        System.out.println("選択肢に存在している数字を入力してください");
       }catch(Exception e){
-        System.out.println("数字を入力してください");
+        System.out.println(RIGHT_NUMBER);
       }
     }
-    return false;
   }
   //道具の効果判定（一覧表示用）
   public static boolean itemResult(Player player, Display display, Enemy enemy, int i){
     //所持数は足りているか
     if(player.getItemCount(i) > NO_ITEM){
-      //スキルによって効果を変える
+      //種類によって効果を変える
       display.setCenterLog(null);
       switch(player.getItemType(i)){
         //回復アイテム
@@ -553,30 +563,91 @@ class RoleMain {
   //アイテム獲得
   public static void gainItem(Player player, Enemy enemy){
     //敵を倒してバトルを終えたのか
-      //５０％の確率で薬草、それ以外の場合は石
-      if((int)(Math.random() * HUNDRED_PERCENT) >= GET_HERB){
-        player.setItem((int)(Math.random() * -HUNDRED_PERCENT)+MIN_HEAL, (int)(Math.random() * MAX_GET_ITEM)+MIN_GET_ITEM, HEAL_ITEM, "薬草");
-      }else{
-        player.setItem((int)(Math.random()*HUNDRED_PERCENT), (int)(Math.random() * MAX_GET_ITEM)+MIN_GET_ITEM, HEAL_ITEM, "石");
-      }
+    //５０％の確率で薬草、それ以外の場合は石
+    if((int)(Math.random() * HUNDRED_PERCENT) >= GET_HERB){
+      player.setItem((int)(Math.random() * -HUNDRED_PERCENT)+MIN_HEAL, (int)(Math.random() * MAX_GET_ITEM) + MIN_GET_ITEM, HEAL_ITEM, "薬草");
+    }else{
+      player.setItem((int)(Math.random() * HUNDRED_PERCENT), (int)(Math.random() * MAX_GET_ITEM) + MIN_GET_ITEM, HEAL_ITEM, "石");
+    }
   }
 
-/*  public static void loop(){
-    for(int i = 0; i<MAX_ITEMGOODS; i++){
-      if(!(allItem[i] == null)){
-        System.out.println(i);
-      }else{
-        System.out.println("asa");
-        break;
+  //戦闘の合間に道具を購入したり休んだり
+  public static boolean town(Player player, Display display){
+    display.setCenterLog(null);
+    String choises[] = {"宿", "道具屋", "ダンジョン", "終了する"};
+      while(LOOP){
+        display.townDisplay(player.getMoney(), choises);
+        try{
+          InputStreamReader is = new InputStreamReader(System.in);
+          BufferedReader br = new BufferedReader(is);
+          String buf = br.readLine(); //入力された文字を受け取る
+          int re = Integer.parseInt(buf);
+          switch(re){
+            case INN:
+              inn(player, display);
+              break;
+            case CURIO_SHOP:
+              display.setCenterLog("未実装です");
+              break;
+            case DUNGEON:
+              return true;
+            case END:
+              return false;
+            default:
+              display.setCenterLog(RIGHT_CHARACTER);
+          }
+        }catch(Exception e){
+          display.setCenterLog(RIGHT_NUMBER);
+        }
+    }
+  }
+
+  //宿 お金があればＨＰを回復できる
+  public static void inn(Player player, Display display){
+    String choises[] = {"休む", "宿から出る"};
+    display.setCenterLog("宿に着いた");
+    //泊まるか帰るまでループ
+    while(LOOP){
+      display.townDisplay(player.getMoney(), choises);
+      try{
+        InputStreamReader is = new InputStreamReader(System.in);
+        BufferedReader br = new BufferedReader(is);
+        String buf = br.readLine(); //入力された文字を受け取る
+        int re = Integer.parseInt(buf);
+        //泊まるか帰るか
+        if(re == 1){
+          System.out.println("一泊500enとなっております\n1.YES 2.NO");
+          buf = br.readLine(); //入力された文字を受け取る
+          re = Integer.parseInt(buf);
+          //お金を払ってもいいか
+          if(re == YES){
+            //お金は足りているか
+            if(player.getMoney() >= 500){
+              System.out.println("宿で休んで疲れを取った\nＨＰとＭＰが回復した\n「またいらしてください」\n");
+              player.healCompleteRecovery();
+              player.changeMoney(-500);
+              display.setCenterLog(null);
+              buf = br.readLine(); //何かが入力されるまでストップ
+              break;
+            }else{
+              display.setCenterLog("お金が足りなかった");
+            }
+          }else if(re == NO){
+            display.setCenterLog("泊まることをやめた");
+          }else{
+            display.setCenterLog(RIGHT_CHARACTER);
+          }
+        }else if(re == 2){
+          display.setCenterLog("何もせずに帰った");
+          break;
+        }else{
+          display.setCenterLog(RIGHT_CHARACTER);
+        }
+      }catch(Exception e){
+          display.setCenterLog(RIGHT_NUMBER);
       }
     }
-    try{
-      InputStreamReader is = new InputStreamReader(System.in);
-      BufferedReader br = new BufferedReader(is);
-      String buf = br.readLine();//入力された文字を受け取る
-      int re = Integer.parseInt(buf);//文字をint型に
-    }catch(Exception e){
-      System.out.println("数字を入力してください");
-    }
-  }*/
+  }
+
+  //道具屋、道具を買ったり売ったり
 }

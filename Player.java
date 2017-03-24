@@ -15,8 +15,8 @@ class Player {
   public static final int MAX_SKILLGOODS = 10; //所持できるスキルの最大数
   public static final int DOWN_HP = 0; //この数値以下になったら倒れる
   public static final int NO_MP = 0; //MPをこの数値以下にできない
-  public static final int MAX_EXPERIENCE_POINT = 100;
-  public static final int NO_ITEM = 0;
+  public static final int MAX_EXPERIENCE_POINT = 100; //この数の経験値がたまったらレベルアップ
+  public static final int NO_ITEM = 0; //アイテムがない状態
   //変数
   private String name; //プレイヤーの名前
   private int HP; //プレイヤーの現在のHP
@@ -27,7 +27,8 @@ class Player {
   private int maxMP; //最大MP
   private int itemGoods = 0; //現在持っているアイテムの種類
   private int skillGoods = 0; //現在所持しているスキルの数
-  private int experiencePoint;
+  private int experiencePoint; //現在獲得した経験値
+  private int money = 1000;
   private Attribution attribution; //属性
   private StateEffect state; //今の状態異常
   private Skill skill[] = new Skill[MAX_SKILLGOODS-1]; //持っているスキル
@@ -244,5 +245,20 @@ class Player {
     attack += upStates[2];
     HP += upStates[0]*HP_UP;
     MP += upStates[1];
+  }
+
+  //HPとMPをすべて回復
+  void healCompleteRecovery(){
+    HP = maxHP;
+    MP = maxMP;
+  }
+
+  //所持金を返す
+  int getMoney(){
+    return money;
+  }
+  //所持金を増やす、減らす
+  void changeMoney(int x){
+    money += x;
   }
 }
