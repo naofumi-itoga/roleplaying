@@ -12,18 +12,21 @@ class Item{
 
   //Item‚Ìî•ñ‚ğŒˆ’è‚·‚é
   Item(int x, int y, int z, String s){
-     itemEffect= x;
+     itemEffect = x;
      itemCount = y;
      itemName = s;
      itemType = z;
   }
   Item(int x, int z, String s){
-    itemEffect= x;
+    itemEffect = x;
     itemName = s;
     itemType = z;
   }
   Item(Item i, int y){
     itemCount = y;
+  }
+  Item(String str){
+    itemName = str;
   }
   //“¹‹ï‚ÌŠ”‚ğ•Ï‚¦‚é
   void countChange(int x){
@@ -47,7 +50,7 @@ class Item{
   }
   //ƒAƒCƒeƒ€‚ğ’Ç‰Á‚·‚é
   void setItem(int x, int y, int z, String s){
-    itemEffect= x;
+    itemEffect = x;
     itemCount = y;
     itemName = s;
     itemType = z;

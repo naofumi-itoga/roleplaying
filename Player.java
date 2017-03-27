@@ -11,8 +11,8 @@ class Player {
   public static final int HEAL_SKILL = 0; //回復特技
   public static final int ATTACK_SKILL = 1; //攻撃特技
   public static final int POWER_UP_SKILL = 2; //その他特技
-  public static final int MAX_ITEMGOODS = 10; //所持できる道具の最大数
-  public static final int MAX_SKILLGOODS = 10; //所持できるスキルの最大数
+  public static final int MAX_ITEMGOODS = 9; //所持できる道具の最大数
+  public static final int MAX_SKILLGOODS = 9; //所持できるスキルの最大数
   public static final int DOWN_HP = 0; //この数値以下になったら倒れる
   public static final int NO_MP = 0; //MPをこの数値以下にできない
   public static final int MAX_EXPERIENCE_POINT = 100; //この数の経験値がたまったらレベルアップ
@@ -31,18 +31,18 @@ class Player {
   private int money = 1000;
   private Attribution attribution; //属性
   private StateEffect state; //今の状態異常
-  private Skill skill[] = new Skill[MAX_SKILLGOODS-1]; //持っているスキル
-  private Item item[] = new Item[MAX_ITEMGOODS-1]; //持っているアイテム
+  private Skill skill[] = new Skill[MAX_SKILLGOODS]; //持っているスキル
+  private Item item[] = new Item[MAX_ITEMGOODS]; //持っているアイテム
 
 
 
   //オブジェクトの初期データを決定する(直接決定)
-  Player(int x,int y,int z){
+  Player(int x, int y, int z){
     maxHP = x;
     maxMP = y;
     attack = z;
     skill[0] = new Skill(1.8, 2);
-    item[0] = new Item(-maxHP/HEAL_HERB, HAVE_HERB, HEAL_ITEM, "薬草");
+    item[0] = new Item(-maxHP / HEAL_HERB, HAVE_HERB, HEAL_ITEM, "薬草");
     attribution = new Attribution();
     state = new StateEffect();
     HP = maxHP;
@@ -51,10 +51,10 @@ class Player {
   //オブジェクトの初期データを決定する(レベルにより決定)
   Player(int x){
     level = x;
-    int upStates[]= new int[3];
-    for(int i=0;i<level;i++){
-      for(int j=0;j<upStates.length;j++){
-        int rnd = (int)(Math.random()*MAX_UP);
+    int upStates[] = new int[3];
+    for(int i = 0; i < level; i++){
+      for(int j = 0; j < upStates.length; j++){
+        int rnd = (int)(Math.random() * MAX_UP);
         upStates[j] += rnd;
       }
     }
@@ -65,25 +65,25 @@ class Player {
     state = new StateEffect();
     HP = maxHP;
     MP = maxMP;
-    item[0] = new Item(-maxHP/HEAL_HERB, HAVE_HERB, HEAL_ITEM, "薬草");
+    item[0] = new Item(-maxHP / HEAL_HERB, HAVE_HERB, HEAL_ITEM, "薬草");
     itemGoods++;
   }
 //名前を決めるメソッド
   void setName(String str){
-    name=str;
+    name = str;
   }
   //HPの計算を行うメソッド
   void HPCalc(int d){
-    HP-=d;
-    if(HP<DOWN_HP){
-      HP=DOWN_HP;
+    HP -= d;
+    if(HP < DOWN_HP){
+      HP = DOWN_HP;
     }
   }
   //MPを計算するメソッド
   void MPCalc(int d){
-    MP-=d;
-    if(MP<NO_MP){
-      MP=NO_MP;
+    MP -= d;
+    if(MP < NO_MP){
+      MP = NO_MP;
     }
   }
   void setAttack(double x){
@@ -122,18 +122,20 @@ class Player {
   double getSkillBonus(int x){
     return skill[x].getSkillBonus();
   }
+  //スキルを新しくセットする
   void setSkill(double x, int y,int z, String s){
     skill[skillGoods] = new Skill(x, y, z, s);
     skillGoods++;
     if(skillGoods >= MAX_SKILLGOODS){
-      skillGoods = MAX_SKILLGOODS-1;
+      skillGoods = MAX_SKILLGOODS - 1;
     }
   }
-  void setSkill(Skill s){
-    skill[skillGoods] = s;
+  //スキルクラスから新しくセットする
+  void setSkill(Skill newSkill){
+    skill[skillGoods] = new Skill(newSkill.getSkillBonus(), newSkill.getSkillCost(), newSkill.getSkillType(), newSkill.getSkillName());
     skillGoods++;
     if(skillGoods >= MAX_SKILLGOODS){
-      skillGoods = MAX_SKILLGOODS-1;
+      skillGoods = MAX_SKILLGOODS - 1;
     }
   }
   //スキルの種類数を返す
@@ -166,40 +168,42 @@ class Player {
     item[x].itemLost();
   }
   //アイテムの所持数を変える
-  void countChange(int x, int i){
+  void itemCountChange(int x, int i){
     item[i].countChange(x);
   }
   //アイテムを追加する
-  void setItem(int x, int y, int z, String s){
-    if(itemGoods >= MAX_ITEMGOODS-1){
+  boolean setItem(int x, int y, int z, String s){
+    if(itemGoods >= MAX_ITEMGOODS){
       for(int i = 0; i < itemGoods; i++){
         if(item[i].getItemCount() == NO_ITEM){
-          item[i] =new Item(x, y, z, "iremono");
-          System.out.println(getItemName(i) + "を" + getItemCount(i) + "個手に入れた");
-          break;
-        }
-        if(i == itemGoods-1){
-          System.out.println("アイテムは持ち切れなかった");
+          item[i] = new Item(x, y, z, "iremono");
+          return true;
         }
       }
+      System.out.println("アイテムは持ち切れなかった");
+      return false;
     }else{
       item[itemGoods] = new Item(x, y, z, s);
-      System.out.println(getItemName(itemGoods) + "を" + getItemCount(itemGoods) + "個手に入れた");
       itemGoods++;
+      return true;
     }
+    //return false;
   }
-  void setItem(Item i){
-    item[itemGoods] = i;
-    itemGoods++;
+  //アイテムクラスからアイテムを追加する
+  boolean setItem(Item newItem){
     if(itemGoods >= MAX_ITEMGOODS){
-      itemGoods = MAX_ITEMGOODS-1;
-    }
-  }
-  void setItem(Item i, int x){
-    item[itemGoods] = i;
-    itemGoods++;
-    if(itemGoods >= MAX_ITEMGOODS){
-      itemGoods = MAX_ITEMGOODS;
+      for(int i = 0; i < itemGoods; i++){
+        if(item[i].getItemCount() == NO_ITEM){
+          item[i] = new Item(newItem.getItemEffect(), newItem.getItemCount(), newItem.getItemType(), newItem.getItemName());
+          return true;
+        }
+      }
+      System.out.println("アイテムは持ち切れなかった");
+      return false;
+    }else{
+      item[itemGoods] = new Item(newItem.getItemEffect(), newItem.getItemCount(), newItem.getItemType(), newItem.getItemName());
+      itemGoods++;
+      return true;
     }
   }
   //所持しているアイテムの種類数を返す
@@ -234,16 +238,16 @@ class Player {
     while(experiencePoint >= MAX_EXPERIENCE_POINT){
       level++;
       System.out.println("レベルアップ！！");
-      for(int j=0;j<upStates.length;j++){
-        int rnd = (int)(Math.random()*MAX_UP);
+      for(int j = 0; j < upStates.length; j++){
+        int rnd = (int)(Math.random() * MAX_UP);
         upStates[j] += rnd;
       }
       experiencePoint -= MAX_EXPERIENCE_POINT;
     }
-    maxHP += upStates[0]*HP_UP;
+    maxHP += upStates[0] * HP_UP;
     maxMP += upStates[1];
     attack += upStates[2];
-    HP += upStates[0]*HP_UP;
+    HP += upStates[0] * HP_UP;
     MP += upStates[1];
   }
 

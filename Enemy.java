@@ -33,29 +33,29 @@ class Enemy {
   //初期データをレベルによって決定する
   Enemy(int x){
     level = x;
-    int upStates[]= new int[2];
-    for(int i=0;i<level;i++){
-      for(int j=0;j<upStates.length;j++){
+    int upStates[] = new int[2];
+    for(int i  =0; i < level; i++){
+      for(int j = 0; j < upStates.length; j++){
         int rnd = (int)(Math.random()*MAX_UP);
         upStates[j] += rnd;
       }
     }
-    maxHP = upStates[0]*HP_UP;
+    maxHP = upStates[0] * HP_UP;
     HP = maxHP;
     attack = upStates[1];
     attribution = new Attribution();
-    useItem = new Item(-HP/HEAL_HERB, HAVE_HERB, HEAL_ITEM, "薬草");
-    escapeProbability = (MAX_ESCAPE-x*ESCAPE_LINEAR);
-    experiencePoint = x*2;
+    useItem = new Item(-HP / HEAL_HERB, HAVE_HERB, HEAL_ITEM, "薬草");
+    escapeProbability = (MAX_ESCAPE -x * ESCAPE_LINEAR);
+    experiencePoint = x * 2;
   }
   void setName(String str){
     name = str;
   }
   //CPUのHPを計算するメソッド
   void HPCalc(int d){
-    HP-=d;
-    if(HP<DOWN_HP){
-      HP=DOWN_HP;
+    HP -= d;
+    if(HP < DOWN_HP){
+      HP = DOWN_HP;
     }
   }
   //CPUのステータスを返すメソッド

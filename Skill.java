@@ -20,8 +20,8 @@ class Skill{
   Skill(double x, int y, int z, String s){
     skillBonus = x;
     skillCost = y;
-    skillName = s;
     skillType = z;
+    skillName = s;
   }
 //特技の性能を返すメソッド
   double getSkillBonus(){

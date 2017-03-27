@@ -32,10 +32,10 @@ class Display {
     }*/
 
     //ウィンドウのサイズを変更してステータスと行動選択の表示
-  Display(Player player, Enemy enemy){
+  Display(Player player){
     System.out.printf(WINDOW_SIZE);
-    statusDisplay(player, enemy);
-    choiseAction();
+//    statusDisplay(player, enemy);
+//    choiseAction();
   }
 
   //バーでステータスを表示
@@ -48,7 +48,7 @@ class Display {
   //バーでHP表示(敵)
   System.out.print("HP:");
     for(int a = 1; a <= 10; a++){
-      if(enemy.getHP() >= enemy.getMaxHP()*a/10){
+      if(enemy.getHP() >= enemy.getMaxHP() * a / 10){
         System.out.print("■");
       }else{
         System.out.print("□");
@@ -64,7 +64,7 @@ class Display {
     //バーでHP表示(自分)
     System.out.print("HP:");
     for(int a = 1; a <= 10; a++){
-      if(player.getHP() >= player.getMaxHP()*a/10){
+      if(player.getHP() >= player.getMaxHP() * a / 10){
         System.out.print("■");
       }else{
         System.out.print("□");
@@ -76,7 +76,7 @@ class Display {
     //バーでHP表示(自分)
     System.out.print("MP:");
       for(int a = 1; a <= 10; a++){
-        if(player.getMP() >= player.getMaxMP()*a/10){
+        if(player.getMP() >= player.getMaxMP() * a / 10){
           System.out.print("■");
         }else{
           System.out.print("□");
@@ -101,7 +101,7 @@ class Display {
 
   //行動選択(枠付き)
   void choiseAction(){
-    System.out.println("========================|3."+ logs[2]);
+    System.out.println("========================|3." + logs[2]);
     System.out.println("1.攻撃 2.特技\t\t|2." + logs[1]);
     System.out.println("3.道具 4.逃走\t\t|1." + logs[0]);
     System.out.println("======================== ");
@@ -122,7 +122,7 @@ class Display {
   }
   //プレイヤーへのダメージおよび回復効果を表示
   String damageDisplay(int d, Player player){
-    if(d>=0){
+    if(d >= 0){
       return d + "のダメージを食らった";
     }else{
       return (d * -1) + "の回復";
@@ -130,7 +130,7 @@ class Display {
   }
   //敵へのダメージを表示
   String damageDisplay(int d, Enemy enemy){
-    if(d>=0){
+    if(d >= 0){
       return "敵に" + d + "のダメージを与えた";
     }else{
       return "敵は" + (d * -1) + "の回復";
@@ -160,14 +160,15 @@ class Display {
     logs[0] = BACK_COLOR_BLUE + s + BACK_COLOR_BASE;
   }
 
-  //中央にダメージ表示する用
+  //ダメージ表示する用
   void setCenterLog(int i){
-    if(i>=0){
+    if(i >= 0){
       centerLog = CENTER_LOG_CHANGE + i + "ダメージ" + BOLD_DEFAULT + COLOR_DEFAULT;
     }else{
-      centerLog = -1*i + "回復";
+      centerLog = -1 * i + "回復";
     }
   }
+  //文字列保存
   void setCenterLog(String str){
       centerLog = str;
   }
@@ -190,6 +191,22 @@ class Display {
       }
     }
     System.out.println("0.もどる" + UNDER_SCORE_RELEASE + BACK_COLOR_BASE);
+    if(centerLog != null){
+      System.out.println(centerLog);
+    }
+  }
+  //道具を表示する(道具屋)
+  void itemDisplay(List<Item> item){
+    System.out.printf(CLEAR + UNDER_SCORE + BACK_COLOR_BLUE);
+    for(int i = 0; i < item.size(); i++){
+      if(item.get(i).getItemCount() > NO_ITEM){
+        System.out.println((i + 1) + "." + item.get(i).getItemName() + ":効果量" + item.get(i).getItemEffect() + ":所持数" + item.get(i).getItemCount() + ":値段" + Math.abs(item.get(i).getItemEffect() * item.get(i).getItemCount()));
+      }
+    }
+    System.out.println("0.もどる" + UNDER_SCORE_RELEASE + BACK_COLOR_BASE);
+    if(centerLog != null){
+      System.out.println(centerLog);
+    }
   }
 
   //町のインターフェース
