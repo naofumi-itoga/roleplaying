@@ -58,35 +58,29 @@ class RoleMain {
   //変数
   public static int count; //ターン数
   public static List<Item> allItem = new ArrayList<Item>(); //すべてのアイテム
-  public static Skill allSkill[] = new Skill[MAX_SKILLGOODS-1]; //すべての特技
+  public static List<Skill> allSkill = new ArrayList<Skill>(); //すべての特技
 
   //Main、流れの制御をおこなう
   public static void main(String args[]){
     //出てくる特技、アイテムの設定
     allItem.add(new Item((int)(Math.random() * -HUNDRED_PERCENT)+MIN_HEAL, (int)(Math.random() * MAX_GET_ITEM)+MIN_GET_ITEM, HEAL_ITEM, "薬草"));
-    //allItem[1] = new Item((int)(Math.random() * HUNDRED_PERCENT), (int)(Math.random() * MAX_GET_ITEM)+MIN_GET_ITEM, ATTACK_ITEM, "石");
-    allSkill[0] = new Skill(1.8, 2, ATTACK_SKILL, "スラッシュ");
-    allSkill[1] = new Skill(8, 10, ATTACK_SKILL, "ブルクラッシュ");
-    allSkill[2] = new Skill(-2, 3, HEAL_SKILL, "月光");
-    allSkill[3] = new Skill(1.3, 5, POWER_UP_SKILL, "力溜");
+    allSkill.add(new Skill(1.8, 2, ATTACK_SKILL, "スラッシュ"));
+    allSkill.add(new Skill(5, 10, ATTACK_SKILL, "ブルクラッシュ"));
+    allSkill.add(new Skill(-2, 5, HEAL_SKILL, "月光"));
+    allSkill.add(new Skill(1.3, 5, POWER_UP_SKILL, "力溜"));
+    allSkill.add(new Skill(-1.5, 2, HEAL_SKILL, "癒しの風"));
+    allSkill.add(new Skill(8, 20, ATTACK_SKILL, "轟"));
+    allSkill.add(new Skill(2.5, 20, POWER_UP_SKILL, "バースト"));
+    allSkill.add(new Skill(-5, 20, HEAL_SKILL, "太陽"));
 
     //Player player = new Player(PL_HP, PL_MP, PL_AT);//プレイヤーのステータス作成
     //Player player = new Player((int)(Math.random() * PLAYER_LEVEL_WIDTH) + PLAYER_LEVEL_LOWEST); //プレイヤーのレベルで作成
-    Player player = new Player(100);
-    //Enemy enemy1 = new Enemy(CP_HP, CP_AT, CP_E);//CPUのステータス作成
-    //Enemy enemy1 = new Enemy((int)(Math.random()*ENEMY_LEVEL_WIDTH)+LEVELLOWEST);//CPUのレベルで作成
-    //Display display = new Display(player, enemy1);//コンソールの描画関係
-/*    player.setSkill(1.8, 2, ATTACK_SKILL, "スラッシュ");
-    player.tem(-player.getMaxHP()/5, 1, HEAL_ITEM, "薬草");
-    player.setSkill(8, 10, ATTACK_SKILL, "ブルクラッシュ");
-    player.setSkill(-2, 3, HEAL_SKILL, "月光");
-    player.setSkill(1.3, 5, POWER_UP_SKILL, "力溜");*/
+    Player player = new Player(99);
     //プレイヤーの使用できるものとして、特技と道具セット
-//    player.setItem(allItem[0]);
-    player.setSkill(allSkill[0]);
-    player.setSkill(allSkill[1]);
-    player.setSkill(allSkill[2]);
-    player.setSkill(allSkill[3]);
+    player.setSkill(allSkill.get(0));
+    player.setSkill(allSkill.get(1));
+    player.setSkill(allSkill.get(2));
+    player.setSkill(allSkill.get(3));
     //プレイヤーのHPが０になるか、続けることをやめるまでループ
     //名前入力
     String nameBuf = null;
@@ -110,6 +104,7 @@ class RoleMain {
     }
     System.out.println("owari");
   }
+
   //戦闘処理を行うメソッド
   public static boolean battle(Player player, Display display){
     boolean escapeSuccess = false; //逃げることに成功したかどうか
@@ -190,7 +185,22 @@ class RoleMain {
     if(player.getHP() > DOWN_HP){
       //逃走に成功していない時だけ獲得
       if(!escapeSuccess){
-        player.levelUp(enemy1.getExperience());
+        if(player.levelUp(enemy1.getExperience())){
+          switch(player.getLevel()){
+            case 100:
+              player.setSkill(allSkill.get(4));
+              break;
+            case 101:
+              player.setSkill(allSkill.get(5));
+              break;
+            case 102:
+              player.setSkill(allSkill.get(6));
+              break;
+            case 103:
+              player.setSkill(allSkill.get(7));
+              break;
+          }
+        }
         gainItem(player); //アイテムを獲得
       }
       System.out.println("次へ進みますか？1:YES, 2:NO");

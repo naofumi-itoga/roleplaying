@@ -3,7 +3,7 @@ class Skill{
   //’è”
   public static final int HEAL_SKILL = 0; //‰ñ•œ“Á‹Z
   public static final int ATTACK_SKILL = 1; //UŒ‚“Á‹Z
-  public static final int OTHER_SKILL = 2; //‚»‚Ì‘¼“Á‹Z
+  public static final int POWER_UP_SKILL = 2; //UŒ‚—Íã¸“Á‹Z
   //•Ï”
   private double skillBonus; //ƒXƒLƒ‹‚Ì”{—¦
   private int skillCost; //ƒXƒLƒ‹‚ÌƒRƒXƒg

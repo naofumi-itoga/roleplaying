@@ -15,7 +15,7 @@ class Player {
   public static final int MAX_SKILLGOODS = 9; //所持できるスキルの最大数
   public static final int DOWN_HP = 0; //この数値以下になったら倒れる
   public static final int NO_MP = 0; //MPをこの数値以下にできない
-  public static final int MAX_EXPERIENCE_POINT = 100; //この数の経験値がたまったらレベルアップ
+  public static final int MAX_EXPERIENCE_POINT = 10; //この数の経験値がたまったらレベルアップ
   public static final int NO_ITEM = 0; //アイテムがない状態
   //変数
   private String name; //プレイヤーの名前
@@ -124,18 +124,20 @@ class Player {
   }
   //スキルを新しくセットする
   void setSkill(double x, int y,int z, String s){
-    skill[skillGoods] = new Skill(x, y, z, s);
-    skillGoods++;
     if(skillGoods >= MAX_SKILLGOODS){
-      skillGoods = MAX_SKILLGOODS - 1;
+      System.out.println("スキルは取得できなかった");
+    }else{
+      skill[skillGoods] = new Skill(x, y, z, s);
+      skillGoods++;
     }
   }
   //スキルクラスから新しくセットする
   void setSkill(Skill newSkill){
-    skill[skillGoods] = new Skill(newSkill.getSkillBonus(), newSkill.getSkillCost(), newSkill.getSkillType(), newSkill.getSkillName());
-    skillGoods++;
     if(skillGoods >= MAX_SKILLGOODS){
-      skillGoods = MAX_SKILLGOODS - 1;
+      System.out.println("スキルは取得できなかった");
+    }else{
+      skill[skillGoods] = new Skill(newSkill.getSkillBonus(), newSkill.getSkillCost(), newSkill.getSkillType(), newSkill.getSkillName());
+      skillGoods++;
     }
   }
   //スキルの種類数を返す
@@ -232,10 +234,10 @@ class Player {
     return state.checkStateEffect();
   }
   //レベルが上がるか
-  void levelUp(int ex){
+  boolean levelUp(int ex){
     experiencePoint += ex;
     int upStates[] = new int[3];
-    while(experiencePoint >= MAX_EXPERIENCE_POINT){
+/*    while(experiencePoint >= MAX_EXPERIENCE_POINT){
       level++;
       System.out.println("レベルアップ！！");
       for(int j = 0; j < upStates.length; j++){
@@ -248,7 +250,23 @@ class Player {
     maxMP += upStates[1];
     attack += upStates[2];
     HP += upStates[0] * HP_UP;
-    MP += upStates[1];
+    MP += upStates[1];*/
+    if(experiencePoint >= MAX_EXPERIENCE_POINT){
+      level++;
+      System.out.println("レベルアップ！！");
+      for(int j = 0; j < upStates.length; j++){
+        int rnd = (int)(Math.random() * MAX_UP);
+        upStates[j] += rnd;
+      }
+      experiencePoint -= MAX_EXPERIENCE_POINT;
+      maxHP += upStates[0] * HP_UP;
+      maxMP += upStates[1];
+      attack += upStates[2];
+      HP += upStates[0] * HP_UP;
+      MP += upStates[1];
+      return true;
+    }
+    return false;
   }
 
   //HPとMPをすべて回復
