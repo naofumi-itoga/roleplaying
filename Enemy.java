@@ -21,6 +21,7 @@ class Enemy {
   private int experiencePoint;
   private Attribution attribution; //敵の属性
   private Item useItem; //敵の使用できるアイテム
+  private Item dropItem; //敵が落とすアイテム
 
   //オブジェクトの初期データを決定する
   Enemy(int x, int y, int z){
@@ -57,6 +58,9 @@ class Enemy {
     if(HP < DOWN_HP){
       HP = DOWN_HP;
     }
+  }
+  void setAttack(double x){
+    attack *= x;
   }
   //CPUのステータスを返すメソッド
   int getHP(){
@@ -102,5 +106,24 @@ class Enemy {
   //その敵に設定された経験値を返す
   int getExperience(){
     return experiencePoint;
+  }
+  //敵を倒した時にまれに落とすアイテムを設定する
+  void setDropItem(int x, int y, int z, String s){
+    dropItem = new Item(x, y, z, s);
+  }
+  //Itemクラスを読み取りアイテムの所持数を返す
+  int getDropItemCount(){
+    return dropItem.getItemCount();
+  }
+  //Itemクラスを読み取りアイテムの効果を返す
+  int getDropItemEffect(){
+    return dropItem.getItemEffect();
+  }
+  //アイテムの名前を返す
+  String getDropItemName(){
+    return dropItem.getItemName();
+  }
+  int getDropItemType(){
+    return dropItem.getItemType();
   }
 }

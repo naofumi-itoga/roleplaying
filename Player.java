@@ -178,7 +178,7 @@ class Player {
     if(itemGoods >= MAX_ITEMGOODS){
       for(int i = 0; i < itemGoods; i++){
         if(item[i].getItemCount() == NO_ITEM){
-          item[i] = new Item(x, y, z, "iremono");
+          item[i] = new Item(x, y, z, s);
           return true;
         }
       }

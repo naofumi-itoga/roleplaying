@@ -36,11 +36,15 @@ class RoleMain {
   public static final double ATTRIBUTION_NOBUFF = 1.0; //通常の属性時攻撃
   public static final int HEAL_ITEM = 0; //回復道具
   public static final int ATTACK_ITEM = 1; //攻撃道具
-  public static final int OTHER_ITEM = 2; //その他道具
+  public static final int POWER_UP_ITEM = 2; //攻撃上昇道具
+  public static final int POWER_DOWN_ITEM = 3; //攻撃下降道具
+  public static final int OTHER_ITEM = 4; //その他道具
   public static final int HEAL_SKILL = 0; //回復特技
   public static final int ATTACK_SKILL = 1; //攻撃特技
   public static final int POWER_UP_SKILL = 2; //強化特技
-  public static final int GET_HERB = 50; //薬草を獲得する確率
+  public static final int GET_HERB = 80; //薬草を獲得する確率
+  public static final int GET_STONE = 60; //石を獲得する確率
+  public static final int GET_RARE = 10; //その敵固有のアイテムを獲得する確率
   public static final int MIN_HEAL = -50; //最低回復量
   public static final int MAX_ITEM_GOODS = 100; //所持できる道具の最大数
   public static final int MAX_GET_ITEM = 10; //一度に獲得できるアイテムの最大数
@@ -63,7 +67,11 @@ class RoleMain {
   //Main、流れの制御をおこなう
   public static void main(String args[]){
     //出てくる特技、アイテムの設定
-    allItem.add(new Item((int)(Math.random() * -HUNDRED_PERCENT)+MIN_HEAL, (int)(Math.random() * MAX_GET_ITEM)+MIN_GET_ITEM, HEAL_ITEM, "薬草"));
+    allItem.add(new Item(-(HUNDRED_PERCENT)+MIN_HEAL, MAX_GET_ITEM, HEAL_ITEM, "ガム"));
+    allItem.add(new Item(150, MIN_GET_ITEM, ATTACK_ITEM, "投げナイフ"));
+    allItem.add(new Item(2000, MIN_GET_ITEM, HEAL_ITEM, "エリクサー"));
+    allItem.add(new Item(2, MIN_GET_ITEM, POWER_DOWN_ITEM, "スラ爆"));
+    allItem.add(new Item(2, MIN_GET_ITEM, POWER_UP_ITEM, "戦いのドラム"));
     allSkill.add(new Skill(1.8, 2, ATTACK_SKILL, "スラッシュ"));
     allSkill.add(new Skill(5, 10, ATTACK_SKILL, "ブルクラッシュ"));
     allSkill.add(new Skill(-2, 5, HEAL_SKILL, "月光"));
@@ -110,18 +118,19 @@ class RoleMain {
     boolean escapeSuccess = false; //逃げることに成功したかどうか
     boolean actionFlag; //行動したかどうか
     boolean enableInput = true;
-    Enemy enemy1 = new Enemy((int)(Math.random() * ENEMY_LEVEL_WIDTH) + ENEMY_LEVEL_LOWEST); //CPUのレベルで作成
-    enemy1.setName("オオカミ");
+    Enemy enemy = new Enemy((int)(Math.random() * ENEMY_LEVEL_WIDTH) + ENEMY_LEVEL_LOWEST); //CPUのレベルで作成
+    enemy.setDropItem(1, 1, ATTACK_ITEM, "牙");
+    enemy.setName("オオカミ");
     display.setCenterLog(null);
     //プレイヤーと敵、両方のHPが残っていて、逃走に成功していない場合繰り返す
-    while(enemy1.getHP() > DOWN_HP && !escapeSuccess && player.getHP() > DOWN_HP){
+    while(enemy.getHP() > DOWN_HP && !escapeSuccess && player.getHP() > DOWN_HP){
       actionFlag = false;
       if(beforeAttackEffect(player)){
         actionFlag = true;
       }
       while(!actionFlag){ //行動を行うまで繰り返し
         enableInput = false;
-        display.statusDisplay(player, enemy1); //敵のHPの表示
+        display.statusDisplay(player, enemy); //敵のHPの表示
         display.choiseAction(); //行動選択の表示
         //display.choiseAction(); //行動選択の表示
           try{
@@ -132,20 +141,20 @@ class RoleMain {
             //1,2,3,4のなにが入力されたか、それによって行動が変化
             switch(re){
               case (ATTACK_COMMAND):
-                actionFlag = normalAttack(player, enemy1, display); //通常攻撃を行う
+                actionFlag = normalAttack(player, enemy, display); //通常攻撃を行う
                 enableInput = true;
                 break;
               case (SKILL_COMMAND):
-                actionFlag = skillAttack(player, enemy1, display); //特技を使用する
+                actionFlag = skillAttack(player, enemy, display); //特技を使用する
                 enableInput = true;
                 break;
               case (ITEM_COMMAND):
-                actionFlag = itemUse(player, enemy1, display); //道具を使用する
+                actionFlag = itemUse(player, enemy, display); //道具を使用する
                 enableInput = true;
                 break;
               case (ESCAPE_COMMAND):
                 actionFlag = true;
-                escapeSuccess = escape(player, enemy1, display); //逃げだす
+                escapeSuccess = escape(player, enemy, display); //逃げだす
                 enableInput = true;
                 break;
               default:
@@ -153,17 +162,17 @@ class RoleMain {
               }
           /*if(re == ATTACK_COMMAND){
             //通常攻撃の処理
-            actionFlag = normalAttack(player, enemy1, display);
+            actionFlag = normalAttack(player, enemy, display);
           }else if(re == SKILL_COMMAND){
             //特技の処理
-            actionFlag = skillAttack(player, enemy1, display);
+            actionFlag = skillAttack(player, enemy, display);
           }else if(re == ITEM_COMMAND){
             //道具の処理
-            actionFlag = itemUse(player, enemy1, display);
+            actionFlag = itemUse(player, enemy, display);
           }else if(re == ESCAPE_COMMAND){
             //逃げるの処理
             actionFlag = true;
-            escapeSuccess = escape(player, enemy1, display);
+            escapeSuccess = escape(player, enemy, display);
           }else{
             System.out.println("1~4の中から選択してください");
           }*/
@@ -173,19 +182,19 @@ class RoleMain {
           }
       }
       //敵のHPが残っていてなおかつ逃走に成功していない場合に実行
-      if(enemy1.getHP() > DOWN_HP && !escapeSuccess){
-        enemyTurn(player, enemy1, display); //敵の行動の処理へ
+      if(enemy.getHP() > DOWN_HP && !escapeSuccess){
+        enemyTurn(player, enemy, display); //敵の行動の処理へ
       }
       display.setLog("_____________");
     }
-    display.statusDisplay(player, enemy1); //敵のHPの表示
+    display.statusDisplay(player, enemy); //敵のHPの表示
     display.choiseAction(); //行動選択の表示
-    display.result(player, enemy1); //戦闘結果の表示
+    display.result(player, enemy); //戦闘結果の表示
     //プレイヤーのHPがある場合選択肢が出る
     if(player.getHP() > DOWN_HP){
       //逃走に成功していない時だけ獲得
       if(!escapeSuccess){
-        if(player.levelUp(enemy1.getExperience())){
+        if(player.levelUp(enemy.getExperience())){
           switch(player.getLevel()){
             case 100:
               player.setSkill(allSkill.get(4));
@@ -201,7 +210,7 @@ class RoleMain {
               break;
           }
         }
-        gainItem(player); //アイテムを獲得
+        gainItem(player, enemy); //アイテムを獲得
       }
       System.out.println("次へ進みますか？1:YES, 2:NO");
       //正しい入力がなされるまで繰り返す
@@ -487,7 +496,7 @@ class RoleMain {
           damage = player.getHP() - player.getMaxHP();
         }
         player.HPCalc(damage);
-        display.setLog(player.getItemName(i) + "を発動");
+        display.setLog(player.getItemName(i) + "を使用");
         display.setLog(display.damageDisplay(damage,player));
         player.itemLost(i);
         return true;
@@ -495,12 +504,22 @@ class RoleMain {
       case (ATTACK_ITEM):
         damage=player.getItemEffect(i); //ダメージ計算用変数
         enemy.HPCalc(damage);
-        display.setLog(player.getItemName(i) + "を発動");
+        display.setLog(player.getItemName(i) + "を使用");
         display.setLog(display.damageDisplay(damage, enemy));
         player.itemLost(i);
         return true;
+      case (POWER_UP_ITEM):
+        player.setAttack(player.getItemEffect(i));
+        display.setLog(player.getItemName(i) + "を使用");
+        player.itemLost(i);
+        return true;
+      case(POWER_DOWN_ITEM):
+      enemy.setAttack(player.getItemEffect(i));
+      display.setLog(player.getItemName(i) + "を使用");
+      player.itemLost(i);
+      return true;
       default:
-        display.setLog(player.getItemName(i) + "を発動");
+        display.setLog(player.getItemName(i) + "を使用");
         display.setLog("効果はなかった");
         player.itemLost(i);
         return true;
@@ -579,7 +598,7 @@ class RoleMain {
   }
 
   //アイテム獲得
-  public static void gainItem(Player player){
+  public static void gainItem(Player player, Enemy enemy){
     //敵を倒してバトルを終えたのか
     //５０％の確率で薬草、それ以外の場合は石
     boolean ableToGet;
@@ -587,16 +606,61 @@ class RoleMain {
     int count;
     int type;
     String str;
-    if((int)(Math.random() * HUNDRED_PERCENT) >= GET_HERB){
+    int rnd = (int)(Math.random() * HUNDRED_PERCENT);
+    if(rnd >= GET_HERB){
       effect = (int)(Math.random() * -HUNDRED_PERCENT) + MIN_HEAL;
       count = (int)(Math.random() * MAX_GET_ITEM) + MIN_GET_ITEM;
       type = HEAL_ITEM;
       str = "薬草";
-    }else{
+    }else if(rnd >= GET_STONE){
       effect = (int)(Math.random() * HUNDRED_PERCENT) + MIN_HEAL;
       count = (int)(Math.random() * MAX_GET_ITEM) + MIN_GET_ITEM;
       type = ATTACK_ITEM;
       str = "石";
+    }else if(rnd <= GET_RARE){
+      effect = enemy.getDropItemEffect();
+      count = enemy.getDropItemCount();
+      type = enemy.getDropItemType();
+      str = enemy.getDropItemName();
+    }else{
+      switch(rnd % 5){
+        case 0:
+          effect = allItem.get(0).getItemEffect();
+          count = allItem.get(0).getItemCount();
+          type = allItem.get(0).getItemType();
+          str = allItem.get(0).getItemName();
+          break;
+        case 1:
+          effect = allItem.get(1).getItemEffect();
+          count = allItem.get(1).getItemCount();
+          type = allItem.get(1).getItemType();
+          str = allItem.get(1).getItemName();
+          break;
+        case 2:
+          effect = allItem.get(2).getItemEffect();
+          count = allItem.get(2).getItemCount();
+          type = allItem.get(2).getItemType();
+          str = allItem.get(2).getItemName();
+          break;
+        case 3:
+          effect = allItem.get(3).getItemEffect();
+          count = allItem.get(3).getItemCount();
+          type = allItem.get(3).getItemType();
+          str = allItem.get(3).getItemName();
+          break;
+        case 4:
+          effect = allItem.get(4).getItemEffect();
+          count = allItem.get(4).getItemCount();
+          type = allItem.get(4).getItemType();
+          str = allItem.get(4).getItemName();
+          break;
+        default:
+          effect = allItem.get(5).getItemEffect();
+          count = allItem.get(5).getItemCount();
+          type = allItem.get(5).getItemType();
+          str = allItem.get(5).getItemName();
+          break;
+      }
     }
     ableToGet = player.setItem(effect, count, type, str);
     if(ableToGet){
@@ -791,8 +855,8 @@ class RoleMain {
           int or = Integer.parseInt(buf);
           if(or == YES){
             display.setCenterLog(player.getItemName(re - 1) + "を売りました");
-            player.itemCountChange(NO_ITEM, re - 1);
             player.changeMoney((Math.abs(player.getItemEffect(re - 1))) * player.getItemCount(re - 1));
+            player.itemCountChange(NO_ITEM, re - 1);
           }else if(or == NO){
             display.setCenterLog("売るのをやめた");
           }else{
