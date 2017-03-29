@@ -44,7 +44,8 @@ class RoleMain {
   public static final int POWER_UP_SKILL = 2; //強化特技
   public static final int GET_HERB = 80; //薬草を獲得する確率
   public static final int GET_STONE = 60; //石を獲得する確率
-  public static final int GET_RARE = 10; //その敵固有のアイテムを獲得する確率
+  public static final int GET_RARE = 40; //その敵固有のアイテムを獲得する確率
+  public static final int NO_DROP = 20; //アイテムが獲得できない確率
   public static final int MIN_HEAL = -50; //最低回復量
   public static final int MAX_ITEM_GOODS = 100; //所持できる道具の最大数
   public static final int MAX_GET_ITEM = 10; //一度に獲得できるアイテムの最大数
@@ -58,9 +59,14 @@ class RoleMain {
   public static final int CURIO_SHOP = 2; //道具屋を選択
   public static final int DUNGEON = 3; //ダンジョンを選択
   public static final int END = 4; //終了を選択
+  public static final int GO_RIGHT = 1; //右へ進む
+  public static final int GO_STRAIGHT = 2; //上へ進む
+  public static final int GO_LEFT = 3; //左へ進む
+  public static final int TURN_BACK = 4; //下へ進む
+  public static final String DUNGEON_NAMES[] = {"草原", "洞窟"};
+  public static final int TOTAL_DUNGEON = 2; //ダンジョンの総数
 
   //変数
-  public static int count; //ターン数
   public static List<Item> allItem = new ArrayList<Item>(); //すべてのアイテム
   public static List<Skill> allSkill = new ArrayList<Skill>(); //すべての特技
 
@@ -103,24 +109,50 @@ class RoleMain {
       }
     }while(nameBuf.length() > 4 || nameBuf.isEmpty());
     Display display = new Display(player); //コンソールの描画関係
+    //ダンジョンの作成
+    Dungeon dungeons = new Dungeon();
     //初めは街へ
-    boolean continuation = town(player, display);
-    boolean escapeSuccess = false;
-    while(continuation){
+    dungeons = town(player, display);
+
+    while(dungeons != null){
       //バトルに入る
-      continuation = battle(player, display);
+      int dungeonEvent = goToDungeon(display, dungeons);
+      switch(dungeonEvent){
+        case 1:
+          dungeons = battle(player, display, dungeons);
+        case 2:
+      }
+      if(dungeons.getNowX() == dungeons.getGoalX() && dungeons.getNowY() == dungeons.getGoalY()){
+        System.out.println("最深部にたどり着いた");
+        boolean ableToGet = player.setItem(dungeons.getTreasure());
+        if(ableToGet){
+          System.out.println("お宝を手に入れた");
+        }else{
+          System.out.println("お宝を手に入れることができなかった");
+        }
+        try{
+          InputStreamReader is = new InputStreamReader(System.in);
+          BufferedReader br = new BufferedReader(is);
+          String buf = br.readLine(); //入力された文字を受け取る
+        }catch(Exception e){
+        }
+        dungeons = town(player, display);
+      }
     }
     System.out.println("owari");
   }
 
   //戦闘処理を行うメソッド
-  public static boolean battle(Player player, Display display){
+  public static Dungeon battle(Player player, Display display, Dungeon dungeons){
+
     boolean escapeSuccess = false; //逃げることに成功したかどうか
     boolean actionFlag; //行動したかどうか
     boolean enableInput = true;
-    Enemy enemy = new Enemy((int)(Math.random() * ENEMY_LEVEL_WIDTH) + ENEMY_LEVEL_LOWEST); //CPUのレベルで作成
-    enemy.setDropItem(1, 1, ATTACK_ITEM, "牙");
-    enemy.setName("オオカミ");
+    System.out.println(dungeons.getAverageLevel());
+    //Enemy enemy = new Enemy((int)(Math.random() * ENEMY_LEVEL_WIDTH) + ENEMY_LEVEL_LOWEST); //CPUのレベルで作成
+    Enemy enemy = new Enemy(dungeons.getAverageLevel() * ((int)(Math.random() * DAMAGE_WIDTH) + DAMAGE_LOWEST) / 100);//Dungeonじょうほうから敵を作成
+    enemy.setDropItem(dungeons.getEnemyDropItem());
+    enemy.setName(dungeons.getEnemyName());
     display.setCenterLog(null);
     //プレイヤーと敵、両方のHPが残っていて、逃走に成功していない場合繰り返す
     while(enemy.getHP() > DOWN_HP && !escapeSuccess && player.getHP() > DOWN_HP){
@@ -132,6 +164,7 @@ class RoleMain {
         enableInput = false;
         display.statusDisplay(player, enemy); //敵のHPの表示
         display.choiseAction(); //行動選択の表示
+        System.out.println(dungeons.getDepth());
         //display.choiseAction(); //行動選択の表示
           try{
             InputStreamReader is = new InputStreamReader(System.in);
@@ -222,11 +255,11 @@ class RoleMain {
           int re = Integer.parseInt(buf);
           if(re == YES){
             //continuation = true;
-            return true;
+            return dungeons;
             //break;
           }else if(re == NO){
             display.clearDisplay();
-//            continuation = town(player, display);
+            //continuation = town(player, display);
             return town(player, display);
             //break;
           }else{
@@ -238,7 +271,7 @@ class RoleMain {
       }
     }else{
       //continuation = false;
-      return false;
+      return null;
     }
   }
 
@@ -521,7 +554,6 @@ class RoleMain {
       default:
         display.setLog(player.getItemName(i) + "を使用");
         display.setLog("効果はなかった");
-        player.itemLost(i);
         return true;
       }
     }
@@ -601,28 +633,31 @@ class RoleMain {
   public static void gainItem(Player player, Enemy enemy){
     //敵を倒してバトルを終えたのか
     //５０％の確率で薬草、それ以外の場合は石
-    boolean ableToGet;
+    boolean ableToGet = false;
     int effect;
-    int count;
+    int count = 0;
     int type;
-    String str;
+    String str = "";
     int rnd = (int)(Math.random() * HUNDRED_PERCENT);
     if(rnd >= GET_HERB){
       effect = (int)(Math.random() * -HUNDRED_PERCENT) + MIN_HEAL;
       count = (int)(Math.random() * MAX_GET_ITEM) + MIN_GET_ITEM;
       type = HEAL_ITEM;
       str = "薬草";
+      ableToGet = player.setItem(effect, count, type, str);
     }else if(rnd >= GET_STONE){
       effect = (int)(Math.random() * HUNDRED_PERCENT) + MIN_HEAL;
       count = (int)(Math.random() * MAX_GET_ITEM) + MIN_GET_ITEM;
       type = ATTACK_ITEM;
       str = "石";
-    }else if(rnd <= GET_RARE){
+      ableToGet = player.setItem(effect, count, type, str);
+    }else if(rnd >= GET_RARE){
       effect = enemy.getDropItemEffect();
       count = enemy.getDropItemCount();
       type = enemy.getDropItemType();
       str = enemy.getDropItemName();
-    }else{
+      ableToGet = player.setItem(effect, count, type, str);
+    }else if(rnd >= NO_DROP){
       switch(rnd % 5){
         case 0:
           effect = allItem.get(0).getItemEffect();
@@ -661,8 +696,8 @@ class RoleMain {
           str = allItem.get(5).getItemName();
           break;
       }
+      ableToGet = player.setItem(effect, count, type, str);
     }
-    ableToGet = player.setItem(effect, count, type, str);
     if(ableToGet){
       System.out.println(str + "を" + count + "個手に入れた");
     }else{
@@ -671,7 +706,7 @@ class RoleMain {
   }
 
   //戦闘の合間に道具を購入したり休んだり
-  public static boolean town(Player player, Display display){
+  public static Dungeon town(Player player, Display display){
     display.setCenterLog(null);
     String choises[] = {"宿", "道具屋", "ダンジョン", "終了する"};
       while(LOOP){
@@ -689,9 +724,9 @@ class RoleMain {
               curioShop(player, display);
               break;
             case DUNGEON:
-              return true;
+              return dungeonChoise(display);
             case END:
-              return false;
+              return null;
             default:
               display.setCenterLog(RIGHT_CHARACTER);
           }
@@ -864,6 +899,96 @@ class RoleMain {
           }
         }else{
           display.setCenterLog(RIGHT_CHARACTER);
+        }
+      }catch(Exception e){
+        display.setCenterLog(RIGHT_NUMBER);
+      }
+    }
+  }
+  //ダンジョン選択を行う
+  public static Dungeon dungeonChoise(Display display){
+    display.setCenterLog(null);
+    while(LOOP){
+      display.dungeonChoiseDisplay(TOTAL_DUNGEON, DUNGEON_NAMES);
+      try{
+        InputStreamReader is = new InputStreamReader(System.in);
+        BufferedReader br = new BufferedReader(is);
+        String buf = br.readLine(); //入力された文字を受け取る
+        int re = Integer.parseInt(buf);
+        switch(re){
+          case 0:
+            return null;
+          case 1:
+            return new GrassDungeon();
+          case 2:
+            return new CaveDungeon();
+          default:
+            display.setCenterLog(RIGHT_CHARACTER);
+        }
+      }catch(Exception e){
+        display.setCenterLog(RIGHT_NUMBER);
+      }
+    }
+  }
+
+  //ダンジョン探索
+  public static int goToDungeon(Display display, Dungeon dungeons){
+    int x = dungeons.getNowX();
+    int y = dungeons.getNowY();
+    display.setCenterLog(x + "a" + y);
+    while(LOOP){
+      display.dungeonDisplay(dungeons, x, y);
+      try{
+        InputStreamReader is = new InputStreamReader(System.in);
+        BufferedReader br = new BufferedReader(is);
+        String buf = br.readLine(); //入力された文字を受け取る
+        int re = Integer.parseInt(buf);
+        switch(re){
+          case 0:
+            break;
+            //右
+          case GO_RIGHT:
+              switch(dungeons.searchDungeon(x + 1, y)){
+                case 0:
+                  display.setCenterLog("その方向には進めない");
+                  break;
+                default:
+                  dungeons.setNow(x + 1, y);
+                  return dungeons.searchDungeon(x + 1, y);
+              }
+            break;
+          case GO_STRAIGHT:
+              switch(dungeons.searchDungeon(x, y - 1)){
+                case 0:
+                  display.setCenterLog("その方向には進めない");
+                  break;
+                default:
+                  dungeons.setNow(x, y - 1);
+                  return dungeons.searchDungeon(x, y - 1);
+              }
+              break;
+          case GO_LEFT:
+            switch(dungeons.searchDungeon(x - 1, y)){
+              case 0:
+                display.setCenterLog("その方向には進めない");
+                break;
+              default:
+                dungeons.setNow(x - 1, y);
+                return dungeons.searchDungeon(x - 1, y);
+            }
+            break;
+          case TURN_BACK:
+              switch(dungeons.searchDungeon(x, y + 1)){
+                case 0:
+                  display.setCenterLog("その方向には進めない");
+                  break;
+                default:
+                  dungeons.setNow(x, y + 1);
+                  return dungeons.searchDungeon(x, y + 1);
+              }
+              break;
+          default:
+            display.setCenterLog(RIGHT_CHARACTER);
         }
       }catch(Exception e){
         display.setCenterLog(RIGHT_NUMBER);

@@ -230,4 +230,54 @@ class Display {
       System.out.println(centerLog);
     }
   }
+
+  //ダンジョンの選択画面
+  void dungeonChoiseDisplay(int totalDungeon, String dungeonName[]){
+    for(int i = 0; i < totalDungeon; i++){
+        System.out.println((i + 1) + ":" + dungeonName[i]);
+    }
+    if(centerLog != null){
+      System.out.println(centerLog);
+    }
+  }
+
+  //ダンジョン内での移動可能か表示
+  void dungeonDisplay(Dungeon dungeons, int x, int y){
+    System.out.printf(CLEAR);
+    for(int i = 0; i < dungeons.getDepth(); i++){
+      for(int j = 0; j < dungeons.getDepth(); j++){
+        if(dungeons.searchDungeon(j, i) == 1){
+          if(dungeons.getNowX() == j && dungeons.getNowY() == i){
+            System.out.print("■");
+          }else{
+            System.out.print("□");
+          }
+        }else{
+          System.out.print(" ");
+        }
+      }
+      System.out.print("\n");
+    }
+    if(dungeons.searchDungeon(x, y - 1) == 1){
+      System.out.print("   2:上");
+    }
+    System.out.print("\n");
+    if(dungeons.searchDungeon(x - 1, y) == 1){
+      System.out.print("3:左");
+    }else{
+      System.out.print("    ");
+    }
+    System.out.print("現");
+    if(dungeons.searchDungeon(x + 1, y) == 1){
+      System.out.print("1:右");
+    }
+    System.out.print("\n");
+    if(dungeons.searchDungeon(x, y + 1) == 1){
+      System.out.print("   4:下");
+    }
+    System.out.print("\n");
+    if(centerLog != null){
+      System.out.println(centerLog);
+    }
+  }
 }

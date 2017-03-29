@@ -111,6 +111,9 @@ class Enemy {
   void setDropItem(int x, int y, int z, String s){
     dropItem = new Item(x, y, z, s);
   }
+  void setDropItem(Item newItem){
+    dropItem = new Item(newItem.getItemEffect(), newItem.getItemCount(), newItem.getItemType(), newItem.getItemName());
+  }
   //Itemクラスを読み取りアイテムの所持数を返す
   int getDropItemCount(){
     return dropItem.getItemCount();

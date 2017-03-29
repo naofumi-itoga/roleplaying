@@ -10,20 +10,20 @@ class Paralysis extends State{
   //何ターン行動できないかを決める
   Paralysis(){
     if(time<=NO_EFFECT){
-      time = (int)(Math.random()*MAX_EFFECT)+MIN_EFFECT;
+      time = (int)(Math.random() * MAX_EFFECT) + MIN_EFFECT;
     }
   }
   //行動できないターンを一つ減らして動けるか動けないかを送る
   boolean getTime(){
     time--;
-    if(time>=NO_EFFECT){
+    if(time >= NO_EFFECT){
       return true;
     }
     return false;
   }
   //麻痺状態かそうでないかを送る
   boolean checkTime(){
-    if(time>=NO_EFFECT){
+    if(time >= NO_EFFECT){
       return true;
     }
     return false;
