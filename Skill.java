@@ -3,7 +3,7 @@ class Skill{
   //定数
   public static final int HEAL_SKILL = 0; //回復特技
   public static final int ATTACK_SKILL = 1; //攻撃特技
-  public static final int OTHER_SKILL = 2; //その他特技
+  public static final int POWER_UP_SKILL = 2; //攻撃力上昇特技
   //変数
   private double skillBonus; //スキルの倍率
   private int skillCost; //スキルのコスト
@@ -20,8 +20,8 @@ class Skill{
   Skill(double x, int y, int z, String s){
     skillBonus = x;
     skillCost = y;
-    skillName = s;
     skillType = z;
+    skillName = s;
   }
 //特技の性能を返すメソッド
   double getSkillBonus(){

@@ -18,8 +18,10 @@ class Enemy {
   private int escapeProbability; //敵から逃げられる確率
   private int level; //敵のレベル
   private int maxHP; //敵の最大HP
+  private int experiencePoint;
   private Attribution attribution; //敵の属性
   private Item useItem; //敵の使用できるアイテム
+  private Item dropItem; //敵が落とすアイテム
 
   //オブジェクトの初期データを決定する
   Enemy(int x, int y, int z){
@@ -32,26 +34,33 @@ class Enemy {
   //初期データをレベルによって決定する
   Enemy(int x){
     level = x;
-    int upStates[]= new int[2];
-    for(int i=0;i<level;i++){
-      for(int j=0;j<upStates.length;j++){
+    int upStates[] = new int[2];
+    for(int i  =0; i < level; i++){
+      for(int j = 0; j < upStates.length; j++){
         int rnd = (int)(Math.random()*MAX_UP);
         upStates[j] += rnd;
       }
     }
-    maxHP = upStates[0]*HP_UP;
+    maxHP = upStates[0] * HP_UP;
     HP = maxHP;
     attack = upStates[1];
     attribution = new Attribution();
-    useItem = new Item(-HP/HEAL_HERB, HAVE_HERB, HEAL_ITEM, "薬草");
-    escapeProbability = (MAX_ESCAPE-x*ESCAPE_LINEAR);
+    useItem = new Item(-HP / HEAL_HERB, HAVE_HERB, HEAL_ITEM, "薬草");
+    escapeProbability = (MAX_ESCAPE -x * ESCAPE_LINEAR);
+    experiencePoint = x * 2;
+  }
+  void setName(String str){
+    name = str;
   }
   //CPUのHPを計算するメソッド
   void HPCalc(int d){
-    HP-=d;
-    if(HP<DOWN_HP){
-      HP=DOWN_HP;
+    HP -= d;
+    if(HP < DOWN_HP){
+      HP = DOWN_HP;
     }
+  }
+  void setAttack(double x){
+    attack *= x;
   }
   //CPUのステータスを返すメソッド
   int getHP(){
@@ -76,6 +85,9 @@ class Enemy {
   int getMaxHP(){
     return maxHP;
   }
+  String getName(){
+    return name;
+  }
   int getItemCount(){
     return useItem.getItemCount();
   }
@@ -88,7 +100,30 @@ class Enemy {
     return useItem.getItemName();
   }
   //アイテムの所持数を減らす
-  int itemLost(){
-    return useItem.itemLost();
+  void itemLost(){
+    useItem.itemLost();
+  }
+  //その敵に設定された経験値を返す
+  int getExperience(){
+    return experiencePoint;
+  }
+  //敵を倒した時にまれに落とすアイテムを設定する
+  void setDropItem(int x, int y, int z, String s){
+    dropItem = new Item(x, y, z, s);
+  }
+  //Itemクラスを読み取りアイテムの所持数を返す
+  int getDropItemCount(){
+    return dropItem.getItemCount();
+  }
+  //Itemクラスを読み取りアイテムの効果を返す
+  int getDropItemEffect(){
+    return dropItem.getItemEffect();
+  }
+  //アイテムの名前を返す
+  String getDropItemName(){
+    return dropItem.getItemName();
+  }
+  int getDropItemType(){
+    return dropItem.getItemType();
   }
 }
